@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Network Brief — Networking for Lawyers</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --bg: #faf6f0;
+    --bg-warm: #f5efe5;
+    --bg-card: #ffffff;
+    --bg-dark: #1a1612;
+    --bg-sidebar: #2c241c;
+    --border: #e0d5c5;
+    --border-dark: #c9bca8;
+    --text: #3d3428;
+    --text-light: #7a6e5e;
+    --text-bright: #1a1612;
+    --accent: #8b2500;
+    --accent-light: #a83a15;
+    --accent-bg: rgba(139,37,0,.06);
+    --gold: #b8860b;
+    --gold-light: rgba(184,134,11,.1);
+    --green: #2d6a4f;
+    --green-light: rgba(45,106,79,.08);
+    --red: #9b2226;
+    --blue: #1b4965;
+    --blue-light: rgba(27,73,101,.08);
+    --layer7: #8b2500;
+    --layer6: #a0522d;
+    --layer5: #b8860b;
+    --layer4: #2d6a4f;
+    --layer3: #1b4965;
+    --layer2: #4a3060;
+    --layer1: #555555;
+    --serif: 'Libre Baskerville', 'Georgia', serif;
+    --display: 'Playfair Display', serif;
+    --elegant: 'Cormorant Garamond', serif;
+    --mono: 'DM Mono', monospace;
+    --radius: 6px;
+    --shadow: 0 2px 12px rgba(26,22,18,.08);
+    --shadow-lg: 0 8px 30px rgba(26,22,18,.12);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* subtle paper texture */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:0;
+  }
+
+  .app { position:relative; z-index:1; max-width:1300px; margin:0 auto; padding:24px 20px; }
+
+  /* ─── HEADER ─── */
+  .header {
+    text-align:center; padding:40px 20px 36px;
+    border-bottom:2px solid var(--bg-dark); margin-bottom:36px;
+    position:relative;
+  }
+  .header::before, .header::after {
+    content:''; position:absolute; left:50%; bottom:-2px;
+    width:40px; height:2px; background:var(--accent);
+  }
+  .header::before { transform:translateX(-50%); }
+  .header::after { display:none; }
+  .header .overline {
+    font-family:var(--mono); font-size:11px; letter-spacing:4px;
+    text-transform:uppercase; color:var(--text-light); margin-bottom:8px;
+  }
+  .header h1 {
+    font-family:var(--display); font-size:clamp(28px,5vw,42px);
+    font-weight:800; color:var(--bg-dark); letter-spacing:-0.5px;
+    line-height:1.2; margin-bottom:6px;
+  }
+  .header h1 em { font-style:italic; color:var(--accent); }
+  .header .subtitle {
+    font-family:var(--elegant); font-size:20px; font-weight:400;
+    color:var(--text-light); font-style:italic;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display:flex; justify-content:center; gap:4px;
+    margin-bottom:36px; flex-wrap:wrap;
+  }
+  .tab {
+    padding:12px 28px; border:1px solid var(--border);
+    background:var(--bg-card); font-family:var(--elegant);
+    font-size:17px; font-weight:600; color:var(--text-light);
+    cursor:pointer; transition:all .25s; border-radius:4px;
+    letter-spacing:0.3px;
+  }
+  .tab:hover { color:var(--text-bright); border-color:var(--border-dark); }
+  .tab.active {
+    background:var(--bg-dark); color:var(--bg);
+    border-color:var(--bg-dark);
+  }
+
+  /* ─── PANELS ─── */
+  .panel { display:none; animation:fadeUp .4s ease; }
+  .panel.active { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+  /* ═══════ EXPLORE ═══════ */
+  .explore-layout { display:grid; grid-template-columns:360px 1fr; gap:28px; align-items:start; }
+  @media(max-width:920px){ .explore-layout{grid-template-columns:1fr;} }
+
+  .osi-stack { display:flex; flex-direction:column; gap:4px; }
+
+  .layer-bar {
+    display:flex; align-items:center; gap:14px;
+    padding:16px 20px; background:var(--bg-card);
+    border:1px solid var(--border); border-left:5px solid transparent;
+    cursor:pointer; transition:all .25s; border-radius:var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .layer-bar:hover { transform:translateX(6px); box-shadow:var(--shadow-lg); }
+  .layer-bar.selected {
+    border-left-color:var(--lc);
+    background:var(--bg-warm);
+    box-shadow:var(--shadow-lg);
+    transform:translateX(10px);
+  }
+  .layer-bar .num {
+    font-family:var(--display); font-weight:800; font-size:26px;
+    width:36px; text-align:center;
+  }
+  .layer-bar .info { flex:1; }
+  .layer-bar .name {
+    font-family:var(--display); font-weight:700; font-size:16px;
+    color:var(--text-bright);
+  }
+  .layer-bar .legal-name {
+    font-family:var(--elegant); font-style:italic; font-size:14px;
+    color:var(--text-light); margin-top:1px;
+  }
+  .layer-bar .pdu-badge {
+    font-family:var(--mono); font-size:11px; padding:4px 10px;
+    border-radius:20px; background:var(--bg-warm);
+    border:1px solid var(--border); color:var(--text-light);
+  }
+
+  /* Layer colors */
+  .layer-bar[data-l="7"]{--lc:var(--layer7)} .layer-bar[data-l="7"] .num{color:var(--layer7)}
+  .layer-bar[data-l="6"]{--lc:var(--layer6)} .layer-bar[data-l="6"] .num{color:var(--layer6)}
+  .layer-bar[data-l="5"]{--lc:var(--layer5)} .layer-bar[data-l="5"] .num{color:var(--layer5)}
+  .layer-bar[data-l="4"]{--lc:var(--layer4)} .layer-bar[data-l="4"] .num{color:var(--layer4)}
+  .layer-bar[data-l="3"]{--lc:var(--layer3)} .layer-bar[data-l="3"] .num{color:var(--layer3)}
+  .layer-bar[data-l="2"]{--lc:var(--layer2)} .layer-bar[data-l="2"] .num{color:var(--layer2)}
+  .layer-bar[data-l="1"]{--lc:var(--layer1)} .layer-bar[data-l="1"] .num{color:var(--layer1)}
+
+  /* ─── DETAIL ─── */
+  .detail-card {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:36px; box-shadow:var(--shadow-lg);
+    position:sticky; top:20px;
+  }
+  .detail-card h2 {
+    font-family:var(--display); font-size:26px; font-weight:700;
+    color:var(--text-bright); margin-bottom:2px; line-height:1.3;
+  }
+  .detail-card .legal-title {
+    font-family:var(--elegant); font-size:18px; font-style:italic;
+    color:var(--text-light); margin-bottom:6px;
+  }
+  .detail-card .pdu-line {
+    font-family:var(--mono); font-size:12px; color:var(--text-light);
+    margin-bottom:24px; padding-bottom:16px;
+    border-bottom:1px solid var(--border);
+  }
+  .section { margin-bottom:24px; }
+  .section-label {
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    text-transform:uppercase; letter-spacing:2.5px;
+    margin-bottom:10px; display:flex; align-items:center; gap:8px;
+  }
+  .section-label .dot { width:8px; height:8px; border-radius:50%; }
+  .section p { font-size:15px; line-height:1.8; }
+
+  .legal-analogy-box {
+    background:var(--gold-light); border:1px solid rgba(184,134,11,.2);
+    border-left:4px solid var(--gold); border-radius:var(--radius);
+    padding:20px; font-size:15px; line-height:1.8;
+  }
+  .legal-analogy-box .gavel { font-size:20px; margin-right:6px; }
+  .legal-analogy-box strong { color:var(--bg-dark); }
+  .legal-analogy-box em { color:var(--accent); font-style:italic; }
+
+  .tech-box {
+    background:var(--blue-light); border:1px solid rgba(27,73,101,.15);
+    border-left:4px solid var(--blue); border-radius:var(--radius);
+    padding:20px; font-size:14px; line-height:1.7;
+  }
+  .tech-box strong { color:var(--blue); }
+
+  .breach-box {
+    background:rgba(155,34,38,.05); border:1px solid rgba(155,34,38,.15);
+    border-left:4px solid var(--red); border-radius:var(--radius);
+    padding:20px; font-size:14px; line-height:1.7;
+  }
+  .breach-box strong { color:var(--red); }
+
+  .protocol-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .protocol-tag {
+    font-family:var(--mono); font-size:12px; padding:5px 12px;
+    border-radius:20px; background:var(--bg-warm);
+    border:1px solid var(--border); color:var(--text);
+    transition:all .2s;
+  }
+  .protocol-tag:hover { border-color:var(--accent); color:var(--accent); }
+
+  .device-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .device-tag {
+    font-family:var(--elegant); font-size:15px; padding:4px 14px;
+    border-radius:20px; background:var(--green-light);
+    border:1px solid rgba(45,106,79,.15); color:var(--green);
+  }
+
+  .placeholder-msg {
+    text-align:center; padding:80px 20px; color:var(--text-light);
+  }
+  .placeholder-msg .icon { font-size:48px; margin-bottom:16px; }
+  .placeholder-msg p { font-family:var(--elegant); font-size:20px; font-style:italic; }
+
+  /* ═══════ PACKET JOURNEY ═══════ */
+  .journey-container { max-width:820px; margin:0 auto; }
+  .journey-header { text-align:center; margin-bottom:32px; }
+  .journey-header h2 { font-family:var(--display); font-size:26px; color:var(--text-bright); margin-bottom:8px; }
+  .journey-header p { font-family:var(--elegant); font-size:18px; color:var(--text-light); font-style:italic; }
+
+  .journey-controls { display:flex; gap:10px; justify-content:center; margin-bottom:28px; flex-wrap:wrap; }
+  .btn {
+    padding:11px 26px; border-radius:4px; border:1px solid var(--border-dark);
+    background:var(--bg-card); color:var(--text); font-family:var(--elegant);
+    font-size:16px; font-weight:600; cursor:pointer; transition:all .2s;
+  }
+  .btn:hover { border-color:var(--text); color:var(--text-bright); }
+  .btn.primary { background:var(--bg-dark); color:var(--bg); border-color:var(--bg-dark); }
+  .btn.primary:hover { background:#2c241c; }
+  .btn:disabled { opacity:.35; cursor:not-allowed; }
+
+  .packet-visual {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px; margin-bottom:24px;
+    box-shadow:var(--shadow);
+  }
+  .packet-label {
+    font-family:var(--mono); font-size:11px; color:var(--text-light);
+    text-transform:uppercase; letter-spacing:2px; margin-bottom:12px;
+  }
+  .packet-blocks { display:flex; gap:2px; border-radius:4px; overflow:hidden; }
+  .packet-block {
+    padding:12px 14px; font-family:var(--mono); font-size:11px;
+    text-align:center; color:#fff; min-width:55px; transition:all .4s;
+  }
+  .packet-block.data-block { flex:1; background:#888; }
+  .packet-block .bl { font-weight:500; font-size:12px; }
+  .packet-block .bd { font-size:10px; opacity:.75; margin-top:2px; }
+
+  .journey-step {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-left:4px solid transparent; border-radius:var(--radius);
+    padding:20px 24px; margin-bottom:8px; opacity:.35;
+    transition:all .3s; box-shadow:var(--shadow);
+  }
+  .journey-step.active { opacity:1; border-left-color:var(--accent); background:var(--bg-warm); }
+  .journey-step.done { opacity:.6; }
+  .journey-step .js-head {
+    display:flex; align-items:center; gap:12px; margin-bottom:8px;
+  }
+  .journey-step .js-num {
+    font-family:var(--display); font-weight:800; font-size:16px;
+    width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; flex-shrink:0;
+  }
+  .journey-step .js-title {
+    font-family:var(--display); font-weight:700; font-size:16px; color:var(--text-bright);
+  }
+  .journey-step .js-legal {
+    font-family:var(--elegant); font-style:italic; font-size:14px; color:var(--gold); margin-left:44px; margin-bottom:6px;
+  }
+  .journey-step .js-desc {
+    font-size:14px; line-height:1.75; color:var(--text); padding-left:44px;
+  }
+
+  /* ═══════ COMPARE ═══════ */
+  .compare-container { max-width:900px; margin:0 auto; }
+  .compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media(max-width:700px){ .compare-grid{grid-template-columns:1fr;} }
+  .compare-col h2 {
+    font-family:var(--display); font-size:22px; text-align:center;
+    margin-bottom:14px; color:var(--text-bright);
+  }
+  .cmp-layer {
+    padding:16px; border-radius:var(--radius); margin-bottom:4px;
+    font-family:var(--elegant); font-size:16px; font-weight:600;
+    text-align:center; border:1px solid transparent; transition:all .2s;
+  }
+  .cmp-layer:hover { border-color:rgba(0,0,0,.08); }
+  .cmp-layer small { display:block; font-size:12px; font-weight:400; opacity:.6; font-family:var(--mono); margin-top:2px; }
+  .compare-note {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:28px; margin-top:28px;
+    box-shadow:var(--shadow);
+  }
+  .compare-note h3 {
+    font-family:var(--display); font-size:18px; color:var(--accent);
+    margin-bottom:12px;
+  }
+
+  /* ═══════ GLOSSARY ═══════ */
+  .glossary-container { max-width:820px; margin:0 auto; }
+  .glossary-header { text-align:center; margin-bottom:28px; }
+  .glossary-header h2 { font-family:var(--display); font-size:26px; color:var(--text-bright); margin-bottom:8px; }
+  .glossary-search {
+    display:block; width:100%; max-width:450px; margin:0 auto;
+    padding:12px 20px; border:1px solid var(--border-dark);
+    border-radius:4px; font-family:var(--serif); font-size:15px;
+    color:var(--text); background:var(--bg-card);
+    outline:none; transition:border .2s;
+  }
+  .glossary-search:focus { border-color:var(--accent); }
+  .glossary-list { margin-top:20px; }
+  .glossary-item {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:20px 24px; margin-bottom:8px;
+    box-shadow:var(--shadow); cursor:pointer; transition:all .2s;
+  }
+  .glossary-item:hover { box-shadow:var(--shadow-lg); }
+  .glossary-item .gi-head { display:flex; justify-content:space-between; align-items:center; }
+  .glossary-item .gi-term {
+    font-family:var(--display); font-size:17px; font-weight:700; color:var(--text-bright);
+  }
+  .glossary-item .gi-layer {
+    font-family:var(--mono); font-size:11px; padding:3px 10px;
+    border-radius:20px; background:var(--bg-warm); border:1px solid var(--border);
+  }
+  .glossary-item .gi-body {
+    display:none; margin-top:14px; padding-top:14px;
+    border-top:1px solid var(--border);
+  }
+  .glossary-item.open .gi-body { display:block; }
+  .glossary-item .gi-tech { font-size:14px; line-height:1.7; margin-bottom:10px; }
+  .glossary-item .gi-legal {
+    font-family:var(--elegant); font-style:italic; font-size:15px;
+    color:var(--gold); line-height:1.6;
+    padding:12px 16px; background:var(--gold-light);
+    border-radius:var(--radius); border-left:3px solid var(--gold);
+  }
+
+  /* ═══════ QUIZ ═══════ */
+  .quiz-container { max-width:720px; margin:0 auto; }
+  .quiz-header { text-align:center; margin-bottom:28px; }
+  .quiz-header h2 { font-family:var(--display); font-size:26px; color:var(--text-bright); margin-bottom:8px; }
+
+  .score-bar {
+    display:flex; align-items:center; justify-content:center; gap:24px;
+    margin-bottom:24px; font-family:var(--mono); font-size:14px;
+  }
+  .score-bar .sc { color:var(--green); }
+  .score-bar .sw { color:var(--red); }
+  .score-bar .st { color:var(--text-light); }
+
+  .quiz-card {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:32px; box-shadow:var(--shadow-lg);
+  }
+  .quiz-q {
+    font-family:var(--display); font-size:18px; font-weight:600;
+    color:var(--text-bright); margin-bottom:24px; line-height:1.5;
+  }
+  .quiz-options { display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt {
+    padding:14px 20px; border-radius:var(--radius); border:1px solid var(--border);
+    background:var(--bg-warm); cursor:pointer; transition:all .2s;
+    font-size:15px; font-family:var(--serif);
+  }
+  .quiz-opt:hover:not(.disabled) { border-color:var(--accent); }
+  .quiz-opt.correct-answer { border-color:var(--green); background:var(--green-light); color:var(--green); }
+  .quiz-opt.wrong-answer { border-color:var(--red); background:rgba(155,34,38,.06); color:var(--red); }
+  .quiz-opt.disabled { cursor:default; }
+
+  .quiz-explanation {
+    margin-top:18px; padding:16px 20px; border-radius:var(--radius);
+    background:var(--gold-light); border-left:4px solid var(--gold);
+    font-size:14px; line-height:1.7; color:var(--text);
+    animation:fadeUp .3s ease;
+  }
+  .quiz-footer { display:flex; justify-content:center; margin-top:24px; gap:10px; }
+
+  /* ─── Scrollbar ─── */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border-dark); border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="overline">A Legal Professional's Guide to</div>
+    <h1>The Network <em>Brief</em></h1>
+    <div class="subtitle">Understanding the OSI Model through the lens of Law</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="explore">The Seven Layers</button>
+    <button class="tab" data-tab="journey">A Case in Transit</button>
+    <button class="tab" data-tab="compare">OSI vs TCP/IP</button>
+    <button class="tab" data-tab="glossary">Legal Glossary</button>
+    <button class="tab" data-tab="quiz">Cross-Examination</button>
+  </div>
+
+  <!-- ═══════════ EXPLORE ═══════════ -->
+  <div class="panel active" id="panel-explore">
+    <div class="explore-layout">
+      <div class="osi-stack" id="osi-stack"></div>
+      <div class="detail-card" id="detail-card">
+        <div class="placeholder-msg">
+          <div class="icon">⚖️</div>
+          <p>Select a layer to read its brief —<br>each one is explained in terms a lawyer would use.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ JOURNEY ═══════════ -->
+  <div class="panel" id="panel-journey">
+    <div class="journey-container">
+      <div class="journey-header">
+        <h2>A Case in Transit</h2>
+        <p>Follow a legal document as it travels from one law office to another — through all seven layers of the network.</p>
+      </div>
+      <div class="journey-controls">
+        <button class="btn" id="j-prev" disabled>← Previous</button>
+        <button class="btn primary" id="j-next">Next Step →</button>
+        <button class="btn" id="j-reset">Start Over</button>
+      </div>
+      <div class="packet-visual">
+        <div class="packet-label">Current Document Package</div>
+        <div class="packet-blocks" id="packet-blocks"></div>
+      </div>
+      <div id="journey-steps"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ COMPARE ═══════════ -->
+  <div class="panel" id="panel-compare">
+    <div class="compare-container">
+      <div style="text-align:center;margin-bottom:32px;">
+        <h2 style="font-family:var(--display);font-size:26px;color:var(--text-bright);margin-bottom:8px;">Two Frameworks, One Network</h2>
+        <p style="font-family:var(--elegant);font-size:18px;color:var(--text-light);font-style:italic;">Like comparing the Model Rules of Professional Conduct (theoretical ideal) with how law is actually practiced in courtrooms.</p>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <h2>OSI Model <span style="font-family:var(--mono);font-size:13px;color:var(--text-light);font-weight:400;">7 Layers</span></h2>
+          <div class="cmp-layer" style="background:rgba(139,37,0,.08);color:var(--layer7)">Layer 7 — Application<small>The Courtroom</small></div>
+          <div class="cmp-layer" style="background:rgba(160,82,45,.08);color:var(--layer6)">Layer 6 — Presentation<small>The Translator</small></div>
+          <div class="cmp-layer" style="background:rgba(184,134,11,.08);color:var(--layer5)">Layer 5 — Session<small>The Court Calendar</small></div>
+          <div class="cmp-layer" style="background:rgba(45,106,79,.08);color:var(--layer4)">Layer 4 — Transport<small>The Legal Courier</small></div>
+          <div class="cmp-layer" style="background:rgba(27,73,101,.08);color:var(--layer3)">Layer 3 — Network<small>The Jurisdictional Map</small></div>
+          <div class="cmp-layer" style="background:rgba(74,48,96,.08);color:var(--layer2)">Layer 2 — Data Link<small>The Office Mailroom</small></div>
+          <div class="cmp-layer" style="background:rgba(85,85,85,.08);color:var(--layer1)">Layer 1 — Physical<small>The Road System</small></div>
+        </div>
+        <div class="compare-col">
+          <h2>TCP/IP Model <span style="font-family:var(--mono);font-size:13px;color:var(--text-light);font-weight:400;">4 Layers</span></h2>
+          <div class="cmp-layer" style="background:rgba(139,37,0,.08);color:var(--layer7);min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;">Application<small>Combines the Courtroom + Translator + Calendar</small><small style="font-family:var(--mono)">(OSI 5-6-7)</small></div>
+          <div class="cmp-layer" style="background:rgba(45,106,79,.08);color:var(--layer4);">Transport<small>The Legal Courier — same role</small><small style="font-family:var(--mono)">(OSI 4)</small></div>
+          <div class="cmp-layer" style="background:rgba(27,73,101,.08);color:var(--layer3);">Internet<small>The Jurisdictional Map — same role</small><small style="font-family:var(--mono)">(OSI 3)</small></div>
+          <div class="cmp-layer" style="background:rgba(74,48,96,.08);color:var(--layer2);min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;">Network Access<small>Combines Mailroom + Road System</small><small style="font-family:var(--mono)">(OSI 1-2)</small></div>
+        </div>
+      </div>
+      <div class="compare-note">
+        <h3>⚖️ The Lawyer's Take</h3>
+        <p style="font-size:15px;line-height:1.8;">
+          Think of it this way: the <strong>OSI Model</strong> is like the <em>Model Rules of Professional Conduct</em> — a clean, theoretical framework that separates every concern into its own chapter. It's perfect for studying and understanding the principles.
+        </p>
+        <p style="font-size:15px;line-height:1.8;margin-top:12px;">
+          The <strong>TCP/IP Model</strong> is how law is <em>actually practiced</em>. In the real world, a partner doesn't carefully separate "session management" from "presentation formatting" — they just dictate a memo, hit send, and it gets there. TCP/IP merges the theoretical layers into practical ones that real protocols use.
+        </p>
+        <p style="font-size:15px;line-height:1.8;margin-top:12px;">
+          <strong>Why learn both?</strong> When something goes wrong — like an intercepted communication or a data breach — you use the OSI model to diagnose <em>which layer</em> was compromised, the same way you'd trace which step in a legal process was violated. "Was the breach at the application level (someone hacked the web portal)? Or at the physical level (someone tapped a cable)?"
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ GLOSSARY ═══════════ -->
+  <div class="panel" id="panel-glossary">
+    <div class="glossary-container">
+      <div class="glossary-header">
+        <h2>Legal–Technical Glossary</h2>
+        <p style="font-family:var(--elegant);font-size:18px;color:var(--text-light);font-style:italic;margin-bottom:20px;">Every networking term, translated into a legal concept you already understand.</p>
+        <input type="text" class="glossary-search" id="glossary-search" placeholder="Search terms… e.g. 'IP address' or 'jurisdiction'">
+      </div>
+      <div class="glossary-list" id="glossary-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUIZ ═══════════ -->
+  <div class="panel" id="panel-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <h2>Cross-Examination</h2>
+        <p style="font-family:var(--elegant);font-size:18px;color:var(--text-light);font-style:italic;">Test your understanding — questions framed in legal language.</p>
+      </div>
+      <div class="score-bar">
+        <span class="sc">Sustained: <span id="s-correct">0</span></span>
+        <span class="sw">Overruled: <span id="s-wrong">0</span></span>
+        <span class="st">Question <span id="s-cur">1</span> of <span id="s-tot">25</span></span>
+      </div>
+      <div class="quiz-card" id="quiz-card"></div>
+      <div class="quiz-footer">
+        <button class="btn primary" id="q-next" style="display:none">Next Question →</button>
+        <button class="btn primary" id="q-restart" style="display:none">Retake Examination</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// LAYER DATA — Full legal analogies
+// ═══════════════════════════════════════════
+const layers = [
+  {
+    num:7, name:"Application", legalName:"The Courtroom",
+    pdu:"Data", color:"var(--layer7)",
+    desc:"The Application layer is where you, the user, actually interact with the network. It's not the application itself — it's the set of rules (protocols) that applications use to request and receive data over the network. Web browsers use HTTP, email clients use SMTP, file transfers use FTP.",
+    legalAnalogy:`<span class="gavel">⚖️</span> This is <strong>the courtroom itself</strong> — the place where your actual business gets done. When you file a motion (HTTP request) or submit evidence (upload a file), you're doing it through procedures that the court requires. You don't build the courthouse; you use its established procedures to present your case. The <em>protocols</em> (HTTP, DNS, SMTP) are like <em>rules of court procedure</em> — they dictate how you must format and submit your requests for the system to accept them.`,
+    protocols:["HTTP/HTTPS","DNS","FTP","SMTP","IMAP","SSH","DHCP","SNMP","LDAP"],
+    devices:["Web Application Firewalls","Proxy Servers","Load Balancers"],
+    techNote:`<strong>DNS</strong> is like a law firm directory — you look up "Johnson & Associates" (google.com) and it gives you their street address (IP: 142.250.80.46). Without DNS, you'd have to memorize every address yourself.`,
+    breach:`<strong>Attacks at this layer:</strong> SQL Injection (tampering with database queries), Cross-Site Scripting/XSS (injecting malicious code into websites), phishing (impersonating a trusted party), DNS spoofing (redirecting you to a fake courthouse). This is the most attacked layer — like the courtroom doors being the most common point of entry for bad actors.`
+  },
+  {
+    num:6, name:"Presentation", legalName:"The Court Translator",
+    pdu:"Data", color:"var(--layer6)",
+    desc:"The Presentation layer handles data formatting, translation, encryption, and compression. It ensures that data from one system can be read by another — translating between different data formats the way a court interpreter translates between languages.",
+    legalAnalogy:`<span class="gavel">⚖️</span> Imagine a trial with a witness who speaks Mandarin in an English-speaking court. The <strong>court translator</strong> converts testimony between languages so both sides understand. That's this layer. It also acts as a <strong>notary's seal</strong> — applying <em>encryption</em> (TLS/SSL) to guarantee that the document hasn't been tampered with and can only be read by the intended recipient. When your browser shows a padlock icon, that's Layer 6 at work.`,
+    protocols:["TLS/SSL","JPEG","PNG","MPEG","ASCII","Unicode","Data Compression"],
+    devices:["SSL Accelerators","Encryption Appliances"],
+    techNote:`<strong>TLS (Transport Layer Security)</strong> is the encryption that makes HTTPS possible. It's like placing your legal documents in a tamper-evident, locked briefcase — anyone intercepting it en route can see a briefcase is traveling, but they can't read the contents.`,
+    breach:`<strong>Attacks at this layer:</strong> SSL stripping (forcing an unencrypted connection — like a fraudster convincing you to send documents unsealed), certificate spoofing (presenting a fake notary seal). If encryption fails here, all communication above it is exposed — like submitting privileged documents on an open table.`
+  },
+  {
+    num:5, name:"Session", legalName:"The Court Calendar & Docket",
+    pdu:"Data", color:"var(--layer5)",
+    desc:"The Session layer establishes, manages, and terminates communication sessions between two systems. It handles authentication (proving identity), determines if communication is one-way or two-way, and can checkpoint/resume conversations if they're interrupted.",
+    legalAnalogy:`<span class="gavel">⚖️</span> This is the <strong>court clerk's docket and calendar system</strong>. Before a case can proceed, the clerk must: (1) verify the identities of both parties (<em>authentication</em>), (2) schedule the hearing (<em>session establishment</em>), (3) manage the order of proceedings (<em>dialog control</em>), and (4) allow the case to be adjourned and resumed later (<em>session checkpointing</em>). Without the docket system, trials would have no structure — people would just shout at each other in the hallway.`,
+    protocols:["NetBIOS","RPC","PPTP","NFS","SMB","SQL Sessions"],
+    devices:["Session Border Controllers"],
+    techNote:`<strong>Session tokens</strong> are like your case docket number. Once you log into a website, you receive a unique token that says "this person has been authenticated." Every subsequent request includes this token — just like referencing your docket number in every filing.`,
+    breach:`<strong>Attacks at this layer:</strong> Session hijacking (stealing someone's docket number to impersonate them), session fixation (pre-assigning a docket number you control), cookie theft. An attacker who steals your session token can impersonate you — like someone forging your docket number to file motions in your name.`
+  },
+  {
+    num:4, name:"Transport", legalName:"The Legal Courier Service",
+    pdu:"Segments (TCP) / Datagrams (UDP)", color:"var(--layer4)",
+    desc:"The Transport layer ensures complete, reliable data transfer between two endpoints. It breaks large messages into smaller pieces (segmentation), ensures they all arrive (acknowledgments), reassembles them in order, and uses port numbers to direct data to the correct application — like apartment numbers within a building.",
+    legalAnalogy:`<span class="gavel">⚖️</span> This is your <strong>legal courier service</strong>. You have two types:<br><br><strong>TCP = Certified/Registered Mail:</strong> Every page of your contract is numbered, tracked, and requires a signed receipt. If page 47 gets lost, it's automatically re-sent. The recipient confirms every piece. This is how important documents (web pages, emails, file transfers) are sent — guaranteed delivery, correct order.<br><br><strong>UDP = Process Server tossing flyers:</strong> Fast delivery, no receipts, no guarantees. If some flyers blow away, that's fine. Used for live video calls and streaming — speed matters more than perfection. A few dropped frames are better than waiting.`,
+    protocols:["TCP","UDP","QUIC","SCTP"],
+    devices:["Stateful Firewalls","Layer 4 Load Balancers"],
+    techNote:`<strong>Port numbers</strong> are like office suite numbers. An IP address gets you to the building (the server); the port number gets you to the right office inside (port 80 = web server, port 443 = secure web, port 22 = SSH, port 25 = email). A server can run many services, just like a building has many offices.`,
+    breach:`<strong>Attacks at this layer:</strong> SYN flood (imagine sending thousands of fake appointment requests to a law firm, overwhelming their receptionist so no real clients can get through — this is a Denial of Service attack), port scanning (trying every door in the building to see which offices are unlocked).`
+  },
+  {
+    num:3, name:"Network", legalName:"Jurisdiction & Venue",
+    pdu:"Packets", color:"var(--layer3)",
+    desc:"The Network layer handles logical addressing (IP addresses) and routing — determining the best path for data to travel across interconnected networks. Routers operate here, making hop-by-hop forwarding decisions. This is where your data gets its source and destination address.",
+    legalAnalogy:`<span class="gavel">⚖️</span> This is <strong>jurisdiction and venue selection</strong>. Every court (device) has a unique address within the judicial system. When you file a case, the system must determine: Which jurisdiction does this belong to? What is the correct venue? How does the filing get routed from a county court to a federal court if needed? <br><br>An <strong>IP address</strong> is like a court's jurisdictional identifier — it uniquely locates one entity in the entire system. A <strong>router</strong> is like the clerks at each level who look at the filing and say "this goes to the 9th Circuit, forward it through the Northern District." Each hop in the routing path is like a transfer between courts until the filing reaches the correct venue.`,
+    protocols:["IPv4","IPv6","ICMP","OSPF","BGP","IPsec"],
+    devices:["Routers","Layer 3 Switches","Firewalls"],
+    techNote:`<strong>IP addresses</strong> come in two versions: <strong>IPv4</strong> (like a 10-digit case number: 192.168.1.88) and <strong>IPv6</strong> (like an expanded filing system with infinitely more numbers). <strong>Subnets</strong> are like judicial districts — they group nearby courts together.`,
+    breach:`<strong>Attacks at this layer:</strong> IP spoofing (filing a motion with a forged jurisdiction stamp), BGP hijacking (re-routing an entire district's cases to a fraudulent court — this has happened to entire countries' internet traffic), ICMP flood (overwhelming a court with procedural pings).`
+  },
+  {
+    num:2, name:"Data Link", legalName:"The Office Mailroom",
+    pdu:"Frames", color:"var(--layer2)",
+    desc:"The Data Link layer handles delivery between directly connected devices on the same local network. It packages data into frames, uses MAC (hardware) addresses for local identification, performs error checking, and controls which device can transmit at any given time.",
+    legalAnalogy:`<span class="gavel">⚖️</span> This is the <strong>internal mailroom of a large law firm</strong>. Once a document arrives at the building (your local network), the mailroom uses <strong>internal office numbers</strong> (MAC addresses — unique hardware identifiers burned into each device) to deliver it to the right desk. The mailroom doesn't know or care about other buildings or cities — it only handles local delivery within the firm. <br><br>The <strong>frame</strong> is like the internal routing envelope used within the firm: it has "From: Desk 4A" and "To: Desk 7C" written on it, plus a checksum seal to detect if someone tampered with it in transit.`,
+    protocols:["Ethernet (802.3)","Wi-Fi (802.11)","PPP","VLAN","STP","ARP"],
+    devices:["Switches","Bridges","Network Cards (NICs)","Access Points"],
+    techNote:`<strong>MAC addresses</strong> are like Social Security numbers for hardware — every network card is manufactured with a unique 48-bit address (e.g., AA:BB:CC:DD:EE:FF). Unlike IP addresses, which can change, MAC addresses are permanent identifiers. <strong>ARP</strong> (Address Resolution Protocol) is the lookup table that maps IP addresses to MAC addresses — like asking "which desk in this office belongs to case #192.168.1.5?"`,
+    breach:`<strong>Attacks at this layer:</strong> ARP spoofing (telling the mailroom "actually, I'm at Desk 7C" to intercept someone else's documents — a classic man-in-the-middle attack), MAC flooding (overwhelming the mailroom's sorting system so it delivers everything to everyone), VLAN hopping (sneaking between segregated departments).`
+  },
+  {
+    num:1, name:"Physical", legalName:"The Road & Building Infrastructure",
+    pdu:"Bits (0s and 1s)", color:"var(--layer1)",
+    desc:"The Physical layer transmits raw binary data — ones and zeros — as electrical signals over copper cables, light pulses over fiber optic cables, or radio waves for wireless. It defines cable types, connectors, voltages, pin layouts, and data rates. There is no intelligence here — just signal transmission.",
+    legalAnalogy:`<span class="gavel">⚖️</span> This is the <strong>physical infrastructure of the justice system</strong> — the actual courthouses, the roads between them, the telephone lines, the mail trucks. It doesn't understand law; it's just the <em>physical means</em> by which legal documents travel from point A to point B. A fiber optic cable is a superhighway; an old copper wire is a country dirt road. Without physical infrastructure, no law can be practiced — just like you can't have a hearing if the courthouse burns down. <br><br>Different "cable types" are like different transportation methods: <strong>Ethernet cable</strong> = paved road, <strong>Fiber optic</strong> = high-speed rail, <strong>Wi-Fi</strong> = air mail.`,
+    protocols:["Ethernet cables (Cat5e/6)","Fiber Optic","Wi-Fi radio","Bluetooth","USB","DSL"],
+    devices:["Hubs","Repeaters","Cables","Modems","Patch Panels"],
+    techNote:`<strong>Bandwidth</strong> is the width of the road — a 1Gbps connection is an eight-lane highway; a 10Mbps connection is a two-lane country road. <strong>Latency</strong> is how long the trip takes. You can have a wide road (high bandwidth) with speed bumps (high latency), or a narrow road (low bandwidth) with no traffic (low latency).`,
+    breach:`<strong>Attacks at this layer:</strong> Wiretapping (physically tapping into a cable — like intercepting mail from a mailbox), cable cutting (physical denial of service — blockading the courthouse), radio jamming (disrupting wireless signals — like flooding a courtroom with noise so no one can hear). These all require <em>physical access</em>, which is why server rooms are locked.`
+  }
+];
+
+// ═══════════════════════════════════════════
+// JOURNEY DATA
+// ═══════════════════════════════════════════
+const journeySteps = [
+  {layer:7,title:"Application Layer",legal:"Filing the Motion",desc:"You open your browser and type a URL — this is like a lawyer drafting a motion to file with the court. The browser creates an HTTP request ('GET me the webpage at this address'). This is the human-readable part of the process.",blocks:[{l:"HTTP Request",d:"GET /case",c:"var(--layer7)"}]},
+  {layer:6,title:"Presentation Layer",legal:"Sealing & Translating the Document",desc:"Your motion is encrypted with TLS — placed in a tamper-evident sealed envelope that only the recipient court can open. The document is also formatted into a universal standard (UTF-8) so any court can read it, regardless of what language their computers speak.",blocks:[{l:"TLS Seal",d:"Encrypted",c:"var(--layer6)"},{l:"HTTP",d:"(sealed)",c:"var(--layer7)"}]},
+  {layer:5,title:"Session Layer",legal:"Opening the Case Docket",desc:"A session is established between your computer and the server — like a clerk opening a new case docket. Both sides verify identity (TLS handshake), agree on the rules of communication, and assign a session ID (docket number) so this conversation can be tracked and resumed if interrupted.",blocks:[{l:"Session",d:"Docket #A3F",c:"var(--layer5)"},{l:"TLS",d:"Sealed",c:"var(--layer6)"},{l:"HTTP",d:"",c:"var(--layer7)"}]},
+  {layer:4,title:"Transport Layer",legal:"Courier Preparation",desc:"The courier service (TCP) takes your document, numbers every page (sequence numbers), notes the return address (source port: 52481) and destination office (port 443), and guarantees delivery with signed receipts (acknowledgments). If any page is lost in transit, it will be re-sent automatically.",blocks:[{l:"TCP",d:"Port 52481→443",c:"var(--layer4)"},{l:"Session",d:"",c:"var(--layer5)"},{l:"Payload",d:"",c:"var(--layer6)"}]},
+  {layer:3,title:"Network Layer",legal:"Determining Jurisdiction & Routing",desc:"The system looks up the destination's jurisdictional address (IP: 93.184.216.34) and your return address (IP: 192.168.1.88). The routing system determines the best path across multiple networks — like routing a case filing from your local county court through the state system to a federal court. Each router along the way is a clerk deciding 'forward this to the next jurisdiction.'",blocks:[{l:"IP Header",d:"192.x → 93.x",c:"var(--layer3)"},{l:"TCP",d:"Ports",c:"var(--layer4)"},{l:"Data",d:"",c:"#888"}]},
+  {layer:2,title:"Data Link Layer",legal:"Internal Mailroom Routing",desc:"Within your local network (your law firm), the mailroom wraps the package in an internal routing envelope stamped with your computer's hardware ID (MAC address) and the gateway router's hardware ID. A checksum seal is applied to detect any tampering during local transit.",blocks:[{l:"Ethernet",d:"MAC→MAC",c:"var(--layer2)"},{l:"IP",d:"",c:"var(--layer3)"},{l:"TCP",d:"",c:"var(--layer4)"},{l:"Data",d:"",c:"#888"}]},
+  {layer:1,title:"Physical Layer",legal:"The Document Leaves the Building",desc:"The entire package is converted into electrical signals on a copper cable, light pulses in a fiber optic line, or radio waves over Wi-Fi — and physically transmitted. This is the mail truck leaving the building. The bits travel at near the speed of light through the physical infrastructure of the internet.",blocks:[{l:"⚡ Electrical / Light / Radio Signals ⚡",d:"",c:"var(--layer1)"}]},
+  {layer:0,title:"Case Received",legal:"The Court Processes Your Filing",desc:"The destination server receives the raw signals and reverses the entire process — Physical → Data Link → Network → Transport → Session → Presentation → Application. Each layer strips its envelope/header, like a courthouse mailroom opening the outer package, then the inner envelope, then the sealed briefcase, until the judge (web server) reads your actual motion and issues a response (the HTML page) — sent back through all seven layers in reverse.",blocks:[{l:"✓ Response travels back through all 7 layers",d:"",c:"var(--green)"}]},
+];
+
+// ═══════════════════════════════════════════
+// GLOSSARY DATA
+// ═══════════════════════════════════════════
+const glossary = [
+  {term:"IP Address",layer:"Layer 3",tech:"A unique numerical identifier assigned to every device on a network (e.g., 192.168.1.88). IPv4 uses 32-bit addresses; IPv6 uses 128-bit.",legal:"Like a court's jurisdictional address within the judicial system — every courthouse has a unique address so cases can be correctly routed to it."},
+  {term:"MAC Address",layer:"Layer 2",tech:"A 48-bit hardware address burned into every network interface card (e.g., AA:BB:CC:DD:EE:FF). Unique per device, permanent.",legal:"Like an attorney's bar number — a permanent, unique identifier assigned at 'birth' (manufacturing) that never changes, regardless of which firm they work at."},
+  {term:"Port Number",layer:"Layer 4",tech:"A 16-bit number (0–65535) identifying a specific application or service on a device. Port 80 = HTTP, 443 = HTTPS, 22 = SSH.",legal:"Like office suite numbers within a courthouse building. The IP address gets you to the building; the port gets you to the right office inside."},
+  {term:"Router",layer:"Layer 3",tech:"A device that forwards packets between different networks by examining IP addresses and consulting routing tables to find the best path.",legal:"Like a jurisdictional clerk who examines a filing, determines which district or circuit it belongs to, and forwards it to the next court in the chain."},
+  {term:"Switch",layer:"Layer 2",tech:"A device that connects devices within the same local network by forwarding frames based on MAC addresses. Smarter than a hub — sends data only to the intended recipient.",legal:"Like a mailroom clerk who reads the internal routing slip and delivers the document directly to the correct desk — not to the whole office."},
+  {term:"Hub",layer:"Layer 1",tech:"A simple device that repeats incoming signals to ALL connected ports, regardless of the intended recipient. No intelligence.",legal:"Like a town crier who shouts your message to everyone in the square — no privacy, no targeting, everyone hears everything."},
+  {term:"DNS",layer:"Layer 7",tech:"Domain Name System — translates human-readable domain names (google.com) into IP addresses (142.250.80.46). Operates like a distributed phone book.",legal:"Like the court system's public directory — you look up a firm's name and get their physical address. Without it, you'd need to memorize every address yourself."},
+  {term:"TCP",layer:"Layer 4",tech:"Transmission Control Protocol — provides reliable, ordered, error-checked delivery of data between applications. Uses a three-way handshake (SYN → SYN-ACK → ACK) to establish connections.",legal:"Like registered/certified mail — every piece is tracked, sequenced, receipt-confirmed, and re-sent if lost. Used when you absolutely cannot afford to lose a page."},
+  {term:"UDP",layer:"Layer 4",tech:"User Datagram Protocol — provides fast, connectionless, unreliable delivery. No handshake, no acknowledgments, no ordering guarantees.",legal:"Like hand-distributing flyers on a busy street — fast, but some will blow away and nobody's tracking them. Used for video calls and livestreaming where speed beats perfection."},
+  {term:"HTTP/HTTPS",layer:"Layer 7",tech:"HyperText Transfer Protocol — the language web browsers and servers use to communicate. HTTPS adds TLS encryption for security.",legal:"Like the rules of court procedure for filing motions — it specifies exactly how a request must be formatted and submitted for the court to accept it. HTTPS = the same rules, but everything is submitted in a sealed envelope."},
+  {term:"TLS/SSL",layer:"Layer 6",tech:"Transport Layer Security — encrypts data in transit so third parties can't read it. Provides authentication via certificates and integrity via checksums.",legal:"Like a notarized, tamper-evident sealed envelope. The notary seal (certificate) proves the sender's identity; the tamper-evident seal proves nobody opened it; the encryption ensures only the intended recipient can read the contents."},
+  {term:"Firewall",layer:"Layers 3-7",tech:"A security device/software that monitors and filters network traffic based on predefined rules. Can operate at multiple OSI layers.",legal:"Like courthouse security — checking credentials at the door, searching for prohibited items, and deciding who is allowed entry based on established rules. An L7 firewall is like a thorough security check; an L3 firewall just checks IDs."},
+  {term:"Packet",layer:"Layer 3",tech:"A unit of data at the Network layer, containing the IP header (source/destination IP, TTL) and the payload from higher layers.",legal:"Like a complete legal filing with the jurisdictional cover sheet attached — includes the 'From' and 'To' court addresses plus the actual document inside."},
+  {term:"Frame",layer:"Layer 2",tech:"A unit of data at the Data Link layer, containing MAC addresses and a CRC error-detection checksum wrapping the network packet.",legal:"Like the internal routing envelope used within a firm — stamped with internal desk numbers (MACs) and a tamper-detection seal (CRC)."},
+  {term:"Subnet",layer:"Layer 3",tech:"A logical subdivision of an IP network. Defined by a subnet mask (e.g., 255.255.255.0 or /24). Groups devices into local neighborhoods.",legal:"Like a judicial district — a geographic subdivision within the larger court system. Cases within the same district (subnet) can be handled locally without going through the federal system (router)."},
+  {term:"ARP",layer:"Layer 2",tech:"Address Resolution Protocol — maps IP addresses to MAC addresses within a local network by broadcasting 'Who has this IP?'",legal:"Like sending an office-wide memo asking 'Who is handling case #192.168.1.5?' so you can deliver documents directly to their desk (MAC address)."},
+  {term:"DHCP",layer:"Layer 7",tech:"Dynamic Host Configuration Protocol — automatically assigns IP addresses, subnet masks, gateways, and DNS servers to devices joining a network.",legal:"Like a court clerk automatically assigning a new case number, venue, and docket when a case is filed — you don't have to choose your own address, the system assigns one."},
+  {term:"VPN",layer:"Layers 3-4",tech:"Virtual Private Network — creates an encrypted tunnel between two points over a public network, making it appear you're on the same private network.",legal:"Like an armored, sealed courier route between two law offices across a public highway. Outsiders can see that a vehicle is traveling, but can't see what documents are inside or even which specific offices are communicating."},
+  {term:"Bandwidth",layer:"Layer 1",tech:"The maximum rate of data transfer across a network path, measured in bits per second (Mbps, Gbps).",legal:"Like the width of the road between two courthouses — a wider road (higher bandwidth) can carry more traffic simultaneously, but doesn't necessarily make each individual vehicle faster."},
+  {term:"Latency",layer:"Layer 1",tech:"The time delay between sending data and it arriving at the destination. Measured in milliseconds.",legal:"Like the travel time for a courier. Even on a wide highway (high bandwidth), the trip from New York to Los Angeles takes time. Low latency = fast delivery."},
+  {term:"Encapsulation",layer:"All layers",tech:"The process of wrapping data with protocol headers as it moves down through the OSI layers. Each layer adds its own 'envelope' around the data from the layer above.",legal:"Like placing a document inside increasingly larger envelopes: first the tamper-evident seal (TLS), then the courier tracking slip (TCP), then the jurisdictional cover sheet (IP), then the internal routing envelope (Ethernet). Each layer adds its own wrapper."},
+  {term:"Three-Way Handshake",layer:"Layer 4",tech:"TCP's connection establishment process: Client sends SYN → Server replies SYN-ACK → Client sends ACK. Only then does data transfer begin.",legal:"Like the preliminary procedures before a hearing: Attorney announces appearance (SYN), Judge acknowledges and confirms readiness (SYN-ACK), Attorney confirms ready to proceed (ACK). Only then does the hearing begin."},
+];
+
+// ═══════════════════════════════════════════
+// QUIZ DATA — Framed in legal language
+// ═══════════════════════════════════════════
+const quizQuestions = [
+  {q:"In our legal analogy, the Application Layer (Layer 7) corresponds to:",opts:["The road system","The courtroom — where cases are actually heard","The courier service","The office mailroom"],correct:1,explain:"Layer 7 is the courtroom — the place where your actual business (data exchange) happens through established rules of procedure (protocols like HTTP, DNS, SMTP)."},
+  {q:"An IP address is most analogous to:",opts:["A lawyer's bar number","A case docket number","A court's unique jurisdictional address","An internal office desk number"],correct:2,explain:"An IP address uniquely identifies a device on a network, just like a court's jurisdictional address uniquely locates it within the judicial system. MAC addresses are more like bar numbers (permanent hardware IDs)."},
+  {q:"TCP guarantees delivery, ordering, and error-checking. In legal terms, TCP is like:",opts:["Hand-distributing flyers on the street","Certified/registered mail with tracking and signed receipts","A town crier shouting to everyone","Air mail with no tracking"],correct:1,explain:"TCP provides reliable, ordered delivery with acknowledgments — like certified mail where every piece is tracked, numbered, and requires a signed receipt."},
+  {q:"A lawyer's bar number — permanent, unique, assigned at 'birth' — is analogous to which networking concept?",opts:["IP address","Port number","MAC address","Subnet mask"],correct:2,explain:"A MAC address is a 48-bit hardware address burned into every network card at manufacturing — permanent and unique, just like a bar number assigned when an attorney passes the bar."},
+  {q:"DNS translates domain names to IP addresses. The legal equivalent would be:",opts:["A courthouse security guard","A court system directory — look up a name, get an address","A judge's ruling","An evidence locker"],correct:1,explain:"DNS is the internet's phone book — you look up a human-readable name (google.com) and get a numerical address (IP). Like looking up 'Johnson & Associates' in the court directory to find their address."},
+  {q:"Which layer handles encryption — placing documents in a tamper-evident sealed envelope?",opts:["Layer 7 (Application)","Layer 5 (Session)","Layer 6 (Presentation)","Layer 4 (Transport)"],correct:2,explain:"The Presentation Layer (Layer 6) handles encryption via TLS/SSL — like sealing a legal document in a tamper-evident, locked envelope that only the intended recipient can open."},
+  {q:"Port numbers are best described in legal terms as:",opts:["Different courthouses in different cities","Office suite numbers within a single courthouse building","Different judges within a courtroom","Filing deadlines"],correct:1,explain:"An IP address gets you to the building (server); a port number gets you to the right office suite inside (port 80 = web server, port 443 = HTTPS, port 22 = SSH)."},
+  {q:"A router examines packet addresses and forwards them along the best path. In legal terms, a router is like:",opts:["A security guard","A jurisdictional clerk forwarding filings to the correct court","An office mailroom clerk","A court reporter"],correct:1,explain:"Routers operate at Layer 3 and make forwarding decisions based on IP addresses — like a jurisdictional clerk who examines a filing and routes it to the correct district or circuit court."},
+  {q:"Session hijacking — stealing someone's session token — is analogous to:",opts:["Tapping a phone line","Forging a jurisdictional address","Stealing someone's case docket number to file motions in their name","Cutting a cable"],correct:2,explain:"A session token is like a docket number that proves your identity. Stealing it lets an attacker impersonate you — just like someone forging your docket number to file motions as if they were you."},
+  {q:"The Data Link layer uses MAC addresses for local delivery. In legal terms, it's like:",opts:["The national court system","A law firm's internal mailroom — delivering to specific desks using internal IDs","The highway system","The court's public directory"],correct:1,explain:"Layer 2 handles local delivery within the same network using MAC addresses — like a firm's mailroom using internal desk numbers to route documents to the right person."},
+  {q:"UDP provides fast delivery with no guarantees. In legal terms, this is like:",opts:["Certified registered mail","A town crier shouting to everyone","Hand-distributing flyers — fast, but some may blow away","A sealed courier shipment"],correct:2,explain:"UDP is connectionless and unreliable but fast — like handing out flyers on a busy street. Some will blow away, but for time-sensitive things (video calls, livestreaming), speed beats perfection."},
+  {q:"A SYN flood attack overwhelms a server's ability to establish connections. The legal analogy would be:",opts:["Burning down a courthouse","Sending thousands of fake appointment requests to a firm, so real clients can't get through","Intercepting mail","Filing in the wrong jurisdiction"],correct:1,explain:"A SYN flood sends thousands of connection requests (SYN packets) without completing the handshake, exhausting the server's resources — like flooding a firm's receptionist with fake appointment requests."},
+  {q:"Encapsulation — each layer adding its own 'envelope' — is most like:",opts:["Translating a document","Placing a document inside increasingly larger envelopes with different routing information at each level","Encrypting a document","Photocopying a document"],correct:1,explain:"Encapsulation wraps data in headers at each layer: TLS seal (L6), TCP tracking slip (L4), IP cover sheet (L3), Ethernet envelope (L2) — each layer adds its own wrapper."},
+  {q:"A firewall is most analogous to:",opts:["A court reporter","The road system","Courthouse security — checking credentials and deciding who enters based on rules","A translator"],correct:2,explain:"A firewall monitors and filters traffic based on predefined rules — like courthouse security checking credentials, searching for prohibited items, and controlling access."},
+  {q:"The Physical layer is concerned with:",opts:["IP addresses","Encryption","The actual cables, signals, and hardware — the road infrastructure","Port numbers"],correct:2,explain:"Layer 1 deals with raw physical transmission — electrical signals on copper, light on fiber, radio waves for Wi-Fi. It's the road infrastructure itself."},
+  {q:"ARP spoofing lets an attacker intercept traffic on a local network. In legal terms, this is like:",opts:["Hacking into the national court system","Telling the mailroom 'I'm at Desk 7C' to intercept someone else's documents","Filing an appeal","Changing a court's jurisdictional address"],correct:1,explain:"ARP spoofing sends fake ARP messages to associate your MAC address with someone else's IP — like telling the mailroom you're at someone else's desk so their documents come to you."},
+  {q:"A VPN creates an encrypted tunnel over a public network. The legal analogy is:",opts:["An armored, sealed courier route between two offices across a public highway","A public megaphone","An open filing cabinet","A town meeting"],correct:0,explain:"A VPN is like an armored vehicle on a public highway — outsiders can see something is traveling, but can't see the contents or even which specific offices are communicating."},
+  {q:"The three-way handshake (SYN, SYN-ACK, ACK) is like:",opts:["A judge rendering a verdict","Preliminary hearing procedures: announce appearance, judge acknowledges, confirm ready to proceed","Filing an appeal","Entering a guilty plea"],correct:1,explain:"TCP's three-way handshake establishes a connection before data flows — like attorneys announcing appearance (SYN), the judge acknowledging (SYN-ACK), and confirming readiness (ACK) before a hearing begins."},
+  {q:"A subnet is like:",opts:["A judicial district — a subdivision within the larger court system","A courtroom","An individual lawyer","A filing cabinet"],correct:0,explain:"A subnet is a logical subdivision of an IP network — like a judicial district that groups nearby courts together so local traffic can be handled without going through the federal system."},
+  {q:"In the TCP/IP model, the Application layer combines which OSI layers?",opts:["Layers 1 and 2","Layers 3 and 4","Layers 5, 6, and 7","Only Layer 7"],correct:2,explain:"TCP/IP's Application layer merges OSI layers 5 (Session), 6 (Presentation), and 7 (Application) into one — combining the courtroom, translator, and court calendar into a single practical layer."},
+  {q:"When your browser shows a padlock icon in the address bar, which OSI layer is primarily responsible?",opts:["Layer 7","Layer 6","Layer 4","Layer 1"],correct:1,explain:"The padlock indicates TLS/SSL encryption, which operates at Layer 6 (Presentation). It means your data is sealed in a tamper-evident encrypted envelope."},
+  {q:"BGP hijacking can redirect an entire country's internet traffic. In legal terms:",opts:["Like burning a courthouse","Like someone re-drawing the jurisdictional map to route all cases through a fraudulent court","Like stealing a session token","Like tapping a phone"],correct:1,explain:"BGP is the routing protocol that determines how traffic flows between large networks. Hijacking it is like fraudulently redrawing jurisdictional boundaries to redirect all filings through a compromised court."},
+  {q:"DHCP automatically assigns IP addresses to devices. In legal terms:",opts:["Like choosing your own court address","Like a clerk automatically assigning a case number, venue, and docket when a case is filed","Like a judge issuing a ruling","Like a courier delivering mail"],correct:1,explain:"DHCP automatically configures network settings — like a court clerk assigning case numbers, venues, and docket entries automatically when a new case is filed."},
+  {q:"Bandwidth vs Latency: a highway analogy would be:",opts:["Bandwidth = number of lanes; Latency = speed limit / travel time","They are the same thing","Bandwidth = speed limit; Latency = number of lanes","Neither relates to highways"],correct:0,explain:"Bandwidth is the width of the road (how much data can flow simultaneously). Latency is how long the trip takes. You can have a wide road (high bandwidth) that's very long (high latency)."},
+];
+
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+  });
+});
+
+// ═══════════════════════════════════════════
+// EXPLORE
+// ═══════════════════════════════════════════
+const stackEl = document.getElementById('osi-stack');
+const detailEl = document.getElementById('detail-card');
+
+layers.forEach(l => {
+  const bar = document.createElement('div');
+  bar.className = 'layer-bar';
+  bar.dataset.l = l.num;
+  bar.innerHTML = `
+    <div class="num">${l.num}</div>
+    <div class="info">
+      <div class="name">${l.name}</div>
+      <div class="legal-name">"${l.legalName}"</div>
+    </div>
+    <div class="pdu-badge">${l.pdu}</div>
+  `;
+  bar.addEventListener('click', () => selectLayer(l, bar));
+  stackEl.appendChild(bar);
+});
+
+function selectLayer(l, bar) {
+  document.querySelectorAll('.layer-bar').forEach(b => b.classList.remove('selected'));
+  bar.classList.add('selected');
+  detailEl.innerHTML = `
+    <h2>Layer ${l.num}: ${l.name}</h2>
+    <div class="legal-title">"${l.legalName}"</div>
+    <div class="pdu-line">PDU: ${l.pdu}</div>
+
+    <div class="section">
+      <div class="section-label"><span class="dot" style="background:${l.color}"></span> What This Layer Does</div>
+      <p>${l.desc}</p>
+    </div>
+
+    <div class="section">
+      <div class="section-label"><span class="dot" style="background:var(--gold)"></span> The Legal Analogy</div>
+      <div class="legal-analogy-box">${l.legalAnalogy}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label"><span class="dot" style="background:var(--blue)"></span> Protocols at This Layer</div>
+      <div class="protocol-tags">${l.protocols.map(p=>`<span class="protocol-tag">${p}</span>`).join('')}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label"><span class="dot" style="background:var(--green)"></span> Devices</div>
+      <div class="device-tags">${l.devices.map(d=>`<span class="device-tag">${d}</span>`).join('')}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label"><span class="dot" style="background:var(--blue)"></span> Technical Detail</div>
+      <div class="tech-box">${l.techNote}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label"><span class="dot" style="background:var(--red)"></span> Security Breaches</div>
+      <div class="breach-box">${l.breach}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════
+// PACKET JOURNEY
+// ═══════════════════════════════════════════
+let jStep = -1;
+const jStepsEl = document.getElementById('journey-steps');
+const jBlocksEl = document.getElementById('packet-blocks');
+const layerColors = {7:'var(--layer7)',6:'var(--layer6)',5:'var(--layer5)',4:'var(--layer4)',3:'var(--layer3)',2:'var(--layer2)',1:'var(--layer1)',0:'var(--green)'};
+
+journeySteps.forEach((s,i) => {
+  const div = document.createElement('div');
+  div.className = 'journey-step';
+  div.innerHTML = `
+    <div class="js-head">
+      <div class="js-num" style="background:${layerColors[s.layer]}">${i+1}</div>
+      <div class="js-title">${s.title}</div>
+    </div>
+    <div class="js-legal">⚖️ ${s.legal}</div>
+    <div class="js-desc">${s.desc}</div>
+  `;
+  jStepsEl.appendChild(div);
+});
+
+function renderJourney() {
+  const steps = jStepsEl.querySelectorAll('.journey-step');
+  steps.forEach((s,i) => {
+    s.classList.remove('active','done');
+    if(i===jStep) s.classList.add('active');
+    else if(i<jStep) s.classList.add('done');
+  });
+  document.getElementById('j-prev').disabled = jStep <= 0;
+  document.getElementById('j-next').disabled = jStep >= journeySteps.length - 1;
+  if(jStep >= 0) {
+    const cur = journeySteps[jStep];
+    jBlocksEl.innerHTML = cur.blocks.map(b =>
+      `<div class="packet-block" style="background:${b.c}"><div class="bl">${b.l}</div><div class="bd">${b.d}</div></div>`
+    ).join('');
+    steps[jStep].scrollIntoView({behavior:'smooth',block:'nearest'});
+  } else {
+    jBlocksEl.innerHTML = '<div class="packet-block data-block"><div class="bl">Your Legal Document</div><div class="bd">Click "Next Step" to begin filing</div></div>';
+  }
+}
+renderJourney();
+document.getElementById('j-next').addEventListener('click',()=>{if(jStep<journeySteps.length-1){jStep++;renderJourney();}});
+document.getElementById('j-prev').addEventListener('click',()=>{if(jStep>0){jStep--;renderJourney();}});
+document.getElementById('j-reset').addEventListener('click',()=>{jStep=-1;renderJourney();});
+
+// ═══════════════════════════════════════════
+// GLOSSARY
+// ═══════════════════════════════════════════
+const glossaryList = document.getElementById('glossary-list');
+const glossarySearch = document.getElementById('glossary-search');
+
+function renderGlossary(filter='') {
+  const f = filter.toLowerCase();
+  const filtered = glossary.filter(g =>
+    g.term.toLowerCase().includes(f) ||
+    g.tech.toLowerCase().includes(f) ||
+    g.legal.toLowerCase().includes(f) ||
+    g.layer.toLowerCase().includes(f)
+  );
+  glossaryList.innerHTML = filtered.map((g,i) => `
+    <div class="glossary-item" data-idx="${i}">
+      <div class="gi-head">
+        <div class="gi-term">${g.term}</div>
+        <div class="gi-layer">${g.layer}</div>
+      </div>
+      <div class="gi-body">
+        <div class="gi-tech">${g.tech}</div>
+        <div class="gi-legal">⚖️ ${g.legal}</div>
+      </div>
+    </div>
+  `).join('');
+
+  glossaryList.querySelectorAll('.glossary-item').forEach(item => {
+    item.addEventListener('click', () => item.classList.toggle('open'));
+  });
+}
+renderGlossary();
+glossarySearch.addEventListener('input', e => renderGlossary(e.target.value));
+
+// ═══════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════
+let qIdx=0, qOk=0, qBad=0;
+let shuffled = [...quizQuestions].sort(()=>Math.random()-.5);
+const quizCard = document.getElementById('quiz-card');
+const qNextBtn = document.getElementById('q-next');
+const qRestartBtn = document.getElementById('q-restart');
+
+function renderQuiz() {
+  document.getElementById('s-tot').textContent = shuffled.length;
+  if(qIdx >= shuffled.length) {
+    const pct = Math.round(qOk/shuffled.length*100);
+    quizCard.innerHTML = `
+      <div style="text-align:center;padding:30px;">
+        <div style="font-size:44px;margin-bottom:16px;">${pct>=85?'⚖️':pct>=60?'📜':'📚'}</div>
+        <div style="font-family:var(--display);font-size:24px;color:var(--text-bright);margin-bottom:8px;">${pct>=85?'Case Dismissed — You Aced It!':pct>=60?'Solid Brief — Room to Improve':'Back to Law School — Study and Retry'}</div>
+        <div style="font-size:17px;margin-bottom:4px;">Final Score: <strong style="color:var(--green);">${qOk}</strong> / ${shuffled.length} (${pct}%)</div>
+      </div>
+    `;
+    qNextBtn.style.display='none';
+    qRestartBtn.style.display='inline-block';
+    return;
+  }
+  const q = shuffled[qIdx];
+  document.getElementById('s-cur').textContent = qIdx+1;
+  quizCard.innerHTML = `
+    <div class="quiz-q">${qIdx+1}. ${q.q}</div>
+    <div class="quiz-options">${q.opts.map((o,i)=>`<div class="quiz-opt" data-i="${i}">${o}</div>`).join('')}</div>
+  `;
+  qNextBtn.style.display='none';
+  quizCard.querySelectorAll('.quiz-opt').forEach(o => {
+    o.addEventListener('click', () => answer(parseInt(o.dataset.i)));
+  });
+}
+
+function answer(idx) {
+  const q = shuffled[qIdx];
+  const opts = quizCard.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>{o.classList.add('disabled');o.style.pointerEvents='none';});
+  if(idx===q.correct){opts[idx].classList.add('correct-answer');qOk++;}
+  else{opts[idx].classList.add('wrong-answer');opts[q.correct].classList.add('correct-answer');qBad++;}
+  document.getElementById('s-correct').textContent=qOk;
+  document.getElementById('s-wrong').textContent=qBad;
+  const ex=document.createElement('div');ex.className='quiz-explanation';ex.textContent=q.explain;
+  quizCard.appendChild(ex);
+  qNextBtn.style.display='inline-block';
+}
+qNextBtn.addEventListener('click',()=>{qIdx++;renderQuiz();});
+qRestartBtn.addEventListener('click',()=>{
+  qIdx=0;qOk=0;qBad=0;
+  shuffled=[...quizQuestions].sort(()=>Math.random()-.5);
+  document.getElementById('s-correct').textContent=0;
+  document.getElementById('s-wrong').textContent=0;
+  qRestartBtn.style.display='none';
+  renderQuiz();
+});
+renderQuiz();
+</script>
+</body>
+</html>
