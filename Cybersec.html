@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberSec Academy</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🛡️</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
+:root{--bg:#0b1018;--bg2:#111a26;--bg3:#162030;--bg4:#1c2a3e;--s:#132030;--s2:#182a40;--b:#1e3555;--b2:#264a6e;--t:#8eafc8;--t2:#5a7f9e;--tb:#e0eff8;--g:#00e676;--g2:#69f0ae;--gbg:rgba(0,230,118,.07);--gbr:rgba(0,230,118,.28);--r:#ff5252;--rbg:rgba(255,82,82,.07);--bl:#448aff;--blbg:rgba(68,138,255,.07);--p:#b388ff;--pbg:rgba(179,136,255,.07);--o:#ffab40;--obg:rgba(255,171,64,.07);--y:#ffd740;--ybg:rgba(255,215,64,.07);--ybr:rgba(255,215,64,.28);--c:#18ffff;--cbg:rgba(24,255,255,.05);--f:'Plus Jakarta Sans',system-ui,sans-serif;--m:'Fira Code',monospace}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--t);font-family:var(--f);line-height:1.75;min-height:100vh;overflow-x:hidden;font-size:15px}
+code{font-family:var(--m);font-size:13px;background:var(--bg3);padding:2px 7px;border-radius:4px;color:var(--c)}
+pre{background:#0d1520;border:1px solid var(--b);border-radius:8px;padding:16px;margin:14px 0;overflow-x:auto;font-family:var(--m);font-size:12px;line-height:1.65;color:var(--g2);white-space:pre-wrap;word-break:break-word}
+
+/* === TOPBAR === */
+.topbar{background:rgba(11,16,24,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--b);padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.tl{display:flex;align-items:center;gap:8px;cursor:pointer}
+.logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#00e676,#00bfa5);display:flex;align-items:center;justify-content:center;font-size:15px}
+.lt{font-weight:800;font-size:15px;color:var(--tb)}.lt span{color:var(--g)}
+.tr{display:flex;gap:5px}.pill{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:12px;background:var(--s);border:1px solid var(--b)}.pill.xp{color:var(--o)}.pill.lv{color:var(--g)}
+
+/* === VIEWS === */
+.view{display:none;animation:vi .3s ease}.view.active{display:block}
+@keyframes vi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* === PATH === */
+.hero{text-align:center;padding:36px 16px 20px}
+.hero h1{font-size:clamp(20px,4vw,30px);font-weight:800;color:var(--tb);margin-bottom:3px}
+.hero p{font-size:13px;color:var(--t2);max-width:440px;margin:0 auto}
+.hs-row{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:11px;color:var(--t2)}.hs{display:flex;align-items:center;gap:3px}.hs b{color:var(--tb)}
+.sum{max-width:620px;margin:0 auto;padding:0 16px}
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:10px 0}
+@media(max-width:480px){.sg{grid-template-columns:repeat(2,1fr)}}
+.sc{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:12px;text-align:center}
+.sc .si{font-size:20px;margin-bottom:2px}.sc .sv{font-size:18px;font-weight:800;color:var(--tb)}.sc .sl{font-size:8px;color:var(--t2);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin:8px 0 16px}
+.bdg{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--s);border:2px solid var(--b);position:relative;cursor:default}
+.bdg.on{border-color:var(--y);background:var(--ybg)}.bdg.off{opacity:.2;filter:grayscale(1)}
+.bdg .bt{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--b2);border-radius:4px;padding:2px 6px;font-size:8px;white-space:nowrap;color:var(--tb);z-index:10;font-weight:600}.bdg:hover .bt{display:block}
+.lb{max-width:620px;margin:0 auto 5px;padding:0 16px}
+.lbb{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--s);border:1px solid var(--b);border-radius:8px;border-left:3px solid}
+.lbb.l1{border-left-color:var(--g)}.lbb.l2{border-left-color:var(--bl)}.lbb.l3{border-left-color:var(--p)}
+.lbb .li{font-size:18px}.lbb .ln{font-weight:700;color:var(--tb);font-size:13px}.lbb .ls{font-size:10px;color:var(--t2)}
+.ms{max-width:620px;margin:0 auto;padding:0 16px}
+.mh{padding:14px 0 10px}.mn{font-family:var(--m);font-size:9px;color:var(--t2);font-weight:600;letter-spacing:1px;text-transform:uppercase}.mt_{font-size:15px;font-weight:800;color:var(--tb)}
+.mcon{width:2px;height:16px;margin:0 auto;background:linear-gradient(var(--gbr),var(--b))}
+.rn{display:flex;align-items:center;gap:12px;margin-bottom:2px}
+.rn:nth-child(odd){flex-direction:row}.rn:nth-child(even){flex-direction:row-reverse}
+@media(max-width:500px){.rn,.rn:nth-child(even){flex-direction:column!important;text-align:center}}
+.rp{width:72px;height:72px;border-radius:12px;background:linear-gradient(145deg,var(--s2),var(--bg3));border:2px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;cursor:pointer;transition:.25s;position:relative}
+.rp:hover{transform:translateY(-2px);border-color:var(--g)}.rp.dn{border-color:var(--g)}
+.rp .ck{position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:var(--g);display:none;align-items:center;justify-content:center;font-size:9px;color:var(--bg);font-weight:800;border:2px solid var(--bg)}.rp.dn .ck{display:flex}
+.rp .pb{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:44px;height:3px;background:var(--bg);border-radius:2px;overflow:hidden}.rp .pf{height:100%;background:var(--g);border-radius:2px}
+.ri{flex:1;max-width:260px}
+.ri h3{font-size:13px;font-weight:700;color:var(--tb);cursor:pointer;margin-bottom:1px}.ri h3:hover{color:var(--g)}
+.ri .rd{font-size:10px;color:var(--t2);line-height:1.3}
+.ri .rm{display:flex;gap:4px;margin-top:4px;font-size:9px;flex-wrap:wrap}
+.tag{padding:1px 6px;border-radius:6px;font-weight:600;background:var(--s);border:1px solid var(--b);color:var(--t2)}
+.tag.easy{color:var(--g);border-color:var(--gbr)}.tag.med{color:var(--o)}.tag.hard{color:var(--r)}.tag.soon{opacity:.4}
+
+/* === ROOM === */
+.rv{max-width:760px;margin:0 auto;padding:14px 14px 50px}
+.rv-bk{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--t2);cursor:pointer;padding:4px 0;margin-bottom:8px;font-weight:600}.rv-bk:hover{color:var(--g)}
+.rv-hd{margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--b)}
+.rv-hd h1{font-size:20px;font-weight:800;color:var(--tb);display:flex;align-items:center;gap:8px}
+.rv-hd .rvd{font-size:12px;color:var(--t2);margin-top:2px}
+.rv-hd .rvm{display:flex;gap:6px;margin-top:6px;font-size:10px;flex-wrap:wrap}
+.rvs{display:flex;align-items:center;gap:2px;color:var(--t2);padding:2px 7px;background:var(--s);border:1px solid var(--b);border-radius:5px}
+.rvpb{margin-top:7px;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}.rvpf{height:100%;background:linear-gradient(90deg,var(--g),#00bfa5);border-radius:2px;transition:width .5s}
+
+/* === TASK === */
+.task{background:var(--s);border:1px solid var(--b);border-radius:8px;margin-bottom:7px;overflow:hidden;transition:.2s}
+.task.dn{border-color:var(--gbr)}
+.th{padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tn{width:26px;height:26px;border-radius:50%;background:var(--bg3);border:2px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--m);font-size:10px;font-weight:700;color:var(--t2);flex-shrink:0}
+.task.dn .tn{background:var(--gbg);color:var(--g);border-color:var(--gbr)}
+.tt{flex:1;font-weight:700;font-size:12px;color:var(--tb)}
+.tx{font-family:var(--m);font-size:8px;color:var(--o);font-weight:700;background:var(--obg);padding:2px 6px;border-radius:6px}
+.tc_{color:var(--t2);font-size:9px;transition:transform .2s}
+.task.op .tc_{transform:rotate(90deg)}
+.tb{display:none;padding:0 14px 16px}.task.op .tb{display:block;animation:vi .2s ease}
+
+/* === CONTENT === */
+.cn{font-size:14px;line-height:1.9}
+.cn h4{font-size:16px;font-weight:700;color:var(--tb);margin:22px 0 8px;padding-top:8px;border-top:1px solid var(--b)}
+.cn h4:first-child{border-top:none;padding-top:0}
+.cn h5{font-size:14px;font-weight:700;color:var(--tb);margin:16px 0 6px}
+.cn p{margin-bottom:14px}.cn ul,.cn ol{margin:8px 0 14px 18px}.cn li{margin-bottom:6px}.cn strong{color:var(--tb)}
+.cn table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px}
+.cn th{background:var(--bg3);color:var(--tb);padding:8px 10px;text-align:left;border:1px solid var(--b);font-weight:600;font-size:11px}
+.cn td{padding:8px 10px;border:1px solid var(--b);font-size:12px;vertical-align:top}
+
+.bx{padding:14px 16px;border-radius:8px;margin:16px 0;font-size:13px;line-height:1.75;border-left:4px solid}
+.bx .bl{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.bx.an{background:var(--obg);border-color:var(--o);color:#ffcc80}
+.bx.sc{background:var(--blbg);border-color:var(--bl);color:#90caf9}
+.bx.wr{background:var(--rbg);border-color:var(--r);color:#ff8a80}
+.bx.tp{background:var(--gbg);border-color:var(--g);color:var(--g2)}
+.bx.ch{background:var(--cbg);border-color:var(--c);color:#80deea}
+.bx.te{background:var(--pbg);border-color:var(--p);color:#ce93d8}
+
+.lab{background:#0a0f16;border:1px solid var(--b);border-radius:8px;margin:16px 0;overflow:hidden}
+.lab-h{background:#0e1620;padding:7px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--b);font-family:var(--m);font-size:10px;font-weight:600;color:var(--c)}
+.lab-dots{display:flex;gap:3px}.lab-dots span{width:7px;height:7px;border-radius:50%}.lab-dots span:nth-child(1){background:#ff5f56}.lab-dots span:nth-child(2){background:#ffbd2e}.lab-dots span:nth-child(3){background:#27c93f}
+.lab-b{padding:14px;font-family:var(--m);font-size:11px;line-height:1.75;color:var(--g2);max-height:320px;overflow-y:auto}
+.lab-b .pr{color:var(--g);font-weight:600}.lab-b .out{color:var(--t);opacity:.85}.lab-b .cm{color:var(--t2);font-style:italic}
+
+/* === QUESTIONS === */
+.qb{background:var(--bg3);border:1px solid var(--b);border-radius:8px;padding:14px 16px;margin-top:14px}
+.qb .qt{font-size:13px;font-weight:700;color:var(--tb);margin-bottom:10px;line-height:1.5}
+.qr{display:flex;gap:5px}
+.qi{flex:1;padding:8px 11px;border:2px solid var(--b);border-radius:6px;background:var(--bg);color:var(--tb);font-family:var(--m);font-size:12px;outline:none;transition:.2s}
+.qi:focus{border-color:var(--bl)}.qi.ok{border-color:var(--g);background:var(--gbg);color:var(--g)}.qi.no{border-color:var(--r);background:var(--rbg)}
+.qbtn{padding:8px 14px;border:none;border-radius:6px;background:var(--g);color:var(--bg);font-family:var(--f);font-size:11px;font-weight:800;cursor:pointer}.qbtn:disabled{opacity:.3;cursor:default}
+.qh{padding:8px 10px;border:1px solid var(--b);border-radius:6px;background:var(--bg);color:var(--t2);font-size:11px;cursor:pointer}.qh:hover{border-color:var(--y);color:var(--y)}
+.qf{margin-top:8px;font-size:12px;padding:8px 12px;border-radius:6px;animation:vi .2s;line-height:1.65}
+.qf.ofb{background:var(--gbg);color:var(--g);border:1px solid var(--gbr)}
+.qf.nfb{background:var(--rbg);color:#ff8a80;border:1px solid rgba(255,82,82,.12)}
+.qf.hfb{background:var(--ybg);color:var(--y);border:1px solid var(--ybr)}
+.mcq{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
+.mc{padding:10px 12px;border:1px solid var(--b);border-radius:6px;cursor:pointer;font-size:12px;transition:.15s;display:flex;align-items:center;gap:8px;color:var(--t)}
+.mc:hover:not(.ds){border-color:var(--bl);color:var(--tb);background:var(--blbg)}
+.mc .ml{width:22px;height:22px;border-radius:50%;background:var(--bg);border:2px solid var(--b);display:flex;align-items:center;justify-content:center;font-family:var(--m);font-size:9px;font-weight:700;flex-shrink:0;color:var(--t2)}
+.mc.omq{border-color:var(--g);background:var(--gbg);color:var(--g)}.mc.omq .ml{background:var(--g);color:var(--bg);border-color:var(--g)}
+.mc.nmq{border-color:var(--r);background:var(--rbg);color:#ff8a80}.mc.nmq .ml{background:var(--r);color:#fff;border-color:var(--r)}
+.mc.ds{cursor:default}
+.xpt{position:fixed;top:62px;right:12px;background:var(--s2);border:1px solid var(--gbr);border-radius:8px;padding:7px 12px;font-weight:800;color:var(--g);font-size:12px;z-index:200;animation:xt .8s ease forwards;pointer-events:none}
+@keyframes xt{0%{opacity:0;transform:translateY(-12px)scale(.9)}20%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+.foot{text-align:center;padding:24px 14px;font-size:9px;color:var(--t2);border-top:1px solid var(--b);margin-top:14px}
+@media(max-width:500px){.rv{padding:10px 8px}.cn{font-size:13px}pre{font-size:10px;padding:10px}.cn table{font-size:10px}.cn th,.cn td{padding:5px 6px}}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="tl" onclick="showP()"><div class="logo">🛡️</div><div class="lt">Cyber<span>Sec</span></div></div><div class="tr"><div class="pill xp">⚡<span id="txp">0</span></div><div class="pill lv">🎯Lv<span id="tlv">1</span></div></div></div>
+<div class="view active" id="vp"></div><div class="view" id="vr"></div>
+<script>
+// We store all data in a separate file to keep this readable
+// Each task has textbook-level content + labs + 8-12 questions
+
+const T1_1=`<h4>What Is a Network — And Why Should You Care?</h4>
+<p>At its most basic, a <strong>network</strong> is two or more devices connected together to share information. That's it. When your phone connects to your home Wi-Fi and can browse the internet, print to a wireless printer, or cast a video to your TV — all of that happens because those devices are on the same network.</p>
+
+<p>But networks aren't just about convenience. <strong>Everything in modern civilization depends on networks:</strong></p>
+<ul>
+<li>Hospitals store patient records, control medical equipment, and coordinate care over networks</li>
+<li>Banks process millions of transactions per second across global networks</li>
+<li>Governments run elections, military communications, and intelligence on classified networks</li>
+<li>Courts file motions, store evidence, and communicate between jurisdictions over networks</li>
+<li>Power grids, water treatment plants, and traffic systems are all network-controlled</li>
+</ul>
+
+<p>This is why cybersecurity matters. When we say "protecting networks," we're not just protecting computers — we're protecting everything that <em>depends</em> on those computers.</p>
+
+<h4>Your Home Network — What's Actually Happening Right Now</h4>
+<p>Let's look at what's in your house right now. You probably have:</p>
+<ul>
+<li>A <strong>modem</strong> — connects to your ISP (Internet Service Provider) through a phone line, cable, or fiber optic cable. This is your connection to the outside world.</li>
+<li>A <strong>router</strong> — creates your private local network. Most home routers also have a built-in Wi-Fi access point. The router assigns IP addresses to your devices, manages traffic, and acts as a security boundary between your home and the internet.</li>
+<li>A <strong>Wi-Fi access point</strong> — broadcasts a wireless signal. In most homes, this is built into the router. It uses radio waves (typically 2.4 GHz or 5 GHz frequency bands) to connect devices wirelessly.</li>
+<li><strong>Ethernet cables</strong> — wired connections, faster and more reliable than Wi-Fi. Desktop computers, gaming consoles, and smart TVs often use these.</li>
+<li><strong>Devices</strong> — phones, laptops, tablets, smart TVs, security cameras, smart speakers, printers, gaming consoles, even smart refrigerators and light bulbs.</li>
+</ul>
+
+<p>All of these devices together form your <strong>Local Area Network (LAN)</strong>. Your LAN is <em>private</em> — devices on it can see and talk to each other, but people on the internet cannot directly reach your devices. Your router acts as a gatekeeper, deciding what traffic is allowed in and out.</p>
+
+<div class="lab">
+<div class="lab-h"><div class="lab-dots"><span></span><span></span><span></span></div>Lab: Visualizing Your Home Network</div>
+<div class="lab-b">
+<div class="cm">// What your home network actually looks like:</div><br>
+<div class="out">
+         ☁️ THE INTERNET
+              │
+              │ (fiber/cable from ISP)
+              │
+         ┌────┴────┐
+         │  MODEM  │  ← Converts ISP signal to Ethernet
+         └────┬────┘
+              │ (Ethernet cable)
+         ┌────┴────┐
+         │ ROUTER  │  ← Creates your LAN, assigns IPs, NAT, firewall
+         │  + WiFi │  ← Broadcasts wireless signal
+         └┬──┬──┬──┘
+          │  │  │
+     ┌────┘  │  └────┐
+     │       │       │
+   📱      💻      📺
+  Phone   Laptop   Smart TV
+ .1.5     .1.88    .1.20
+(WiFi)   (WiFi)   (Ethernet)
+</div><br>
+<div class="cm">// Every device gets a private IP: 192.168.1.x</div>
+<div class="cm">// The router's internal IP is usually 192.168.1.1</div>
+<div class="cm">// The router's external (public) IP is assigned by your ISP</div>
+<div class="cm">// NAT translates between private and public IPs</div>
+</div>
+</div>
+
+<div class="bx an"><div class="bl">⚖️ Legal Analogy — Your Home Network</div>Think of your home network as a <strong>private law firm</strong>. Inside the building, everyone can access shared resources — the printer, the conference room, the file server. The router is the <strong>reception desk and security checkpoint</strong>. It decides who from outside can enter (incoming traffic) and handles outgoing communications (outgoing traffic). Nobody on the street can walk in without going through reception first. The <strong>firewall</strong> built into your router is like the security policy — it has rules about what's allowed in and what gets rejected.</div>
+
+<h4>Types of Networks — From Personal to Planetary</h4>
+<p>Networks come in different sizes, each designed for a different scope:</p>
+
+<table>
+<tr><th>Type</th><th>Full Name</th><th>Scope</th><th>Example</th><th>Typical Speed</th></tr>
+<tr><td><strong>PAN</strong></td><td>Personal Area Network</td><td>Within arm's reach (~1-10m)</td><td>Bluetooth headphones ↔ phone, smartwatch ↔ phone</td><td>1-3 Mbps</td></tr>
+<tr><td><strong>LAN</strong></td><td>Local Area Network</td><td>One building or campus</td><td>Home Wi-Fi, office network, school computer lab</td><td>100Mbps-10Gbps</td></tr>
+<tr><td><strong>WLAN</strong></td><td>Wireless LAN</td><td>Same as LAN, but wireless</td><td>Wi-Fi specifically (802.11 standard)</td><td>Up to 9.6 Gbps (Wi-Fi 6)</td></tr>
+<tr><td><strong>MAN</strong></td><td>Metropolitan Area Network</td><td>A city or metro area</td><td>City government network connecting all departments</td><td>Variable</td></tr>
+<tr><td><strong>WAN</strong></td><td>Wide Area Network</td><td>Countries/continents</td><td>The internet itself; corporate networks spanning offices worldwide</td><td>Variable</td></tr>
+<tr><td><strong>VPN</strong></td><td>Virtual Private Network</td><td>Logical tunnel over any network</td><td>Remote worker connecting securely to the office</td><td>Depends on underlying connection</td></tr>
+<tr><td><strong>SAN</strong></td><td>Storage Area Network</td><td>Data center storage</td><td>High-speed network connecting servers to storage arrays</td><td>16-128 Gbps</td></tr>
+</table>
+
+<h4>The Internet — A Network of Networks</h4>
+<p>The internet is not one single network. It's <strong>millions of interconnected networks</strong> — your home LAN connects to your ISP's network, which connects to regional networks, which connect to backbone networks operated by companies like Lumen (formerly CenturyLink), Cogent, and Hurricane Electric. These backbone networks are connected through <strong>Internet Exchange Points (IXPs)</strong> — physical buildings where networks meet and exchange traffic.</p>
+
+<p>Fundamentally, the internet is <strong>physical infrastructure</strong>:</p>
+<ul>
+<li><strong>Undersea cables</strong> — over 550 active submarine cables totaling 1.3+ million km carry 95% of intercontinental data. These are fiber optic cables on the ocean floor, some as thin as a garden hose.</li>
+<li><strong>Data centers</strong> — massive buildings filled with thousands of servers. Companies like Google, Amazon, and Microsoft operate data centers on every continent (except Antarctica).</li>
+<li><strong>Cell towers</strong> — for mobile internet (4G/5G)</li>
+<li><strong>Satellite links</strong> — for remote areas (e.g., Starlink)</li>
+</ul>
+
+<div class="bx sc"><div class="bl">📰 Real-World Case: Submarine Cable Sabotage</div>In January 2022, an undersea cable connecting Norway to Svalbard was mysteriously severed, cutting off satellite communication for a research station. In October 2022, the Nord Stream gas pipeline sabotage also damaged nearby submarine cables in the Baltic Sea. In February 2024, three submarine cables in the Red Sea were cut — reportedly by a Houthi-anchored ship — disrupting 25% of internet traffic between Asia and Europe.<br><br>These incidents highlight a critical vulnerability: the global internet depends on a relatively small number of physical cables. A single cable cut can disrupt connectivity for millions of people. Some military and intelligence operations specifically target submarine cables for surveillance (see: NSA's Operation Ivy Bells during the Cold War).</div>
+
+<div class="bx tp"><div class="bl">💡 Key Concept: The Internet Is Physical</div>There is no "cloud." When someone says your data is "in the cloud," it's actually sitting on a hard drive in a specific building, in a specific city, connected by specific cables. "The cloud" is just someone else's computer. Understanding this physical reality is essential for understanding cybersecurity — because physical access to infrastructure = potential compromise.</div>
+
+<h4>Network Topologies — How Devices Are Arranged</h4>
+<p>A <strong>topology</strong> describes how devices are connected to each other. This affects performance, reliability, and cost:</p>
+
+<table>
+<tr><th>Topology</th><th>How It Works</th><th>Pros</th><th>Cons</th><th>Used Where</th></tr>
+<tr><td><strong>Star ⭐</strong></td><td>All devices connect to a central switch/router</td><td>Easy to manage; one device failure doesn't affect others</td><td>Central device is a single point of failure</td><td>Most modern networks (homes, offices)</td></tr>
+<tr><td><strong>Bus 🚌</strong></td><td>All devices share one single cable (backbone)</td><td>Cheap, simple to set up</td><td>One cable break = entire network down; collisions</td><td>Old Ethernet networks (obsolete)</td></tr>
+<tr><td><strong>Ring 🔄</strong></td><td>Each device connects to exactly two neighbors, forming a loop</td><td>Equal access; predictable performance</td><td>One break = network down (unless dual-ring)</td><td>Token Ring (legacy); some fiber backbones</td></tr>
+<tr><td><strong>Mesh 🕸️</strong></td><td>Every device connects to every other device</td><td>Maximum redundancy; no single point of failure</td><td>Expensive; complex wiring</td><td>Military; critical infrastructure; mesh Wi-Fi</td></tr>
+<tr><td><strong>Hybrid</strong></td><td>Combination of topologies</td><td>Flexible; tailored to needs</td><td>Complex to design and maintain</td><td>Most large enterprise networks</td></tr>
+</table>
+
+<div class="bx an"><div class="bl">⚖️ Analogy — Topologies as Court Systems</div>
+<strong>Star</strong> = A courthouse with a central clerk. All filings go through one clerk. If the clerk is sick, nothing moves. But one lawyer being absent doesn't stop others.<br><br>
+<strong>Bus</strong> = A single hallway where everyone shouts their business. If the hallway is blocked, nobody can communicate. Everyone hears everyone (collision risk).<br><br>
+<strong>Ring</strong> = A round table where you can only pass documents to the person next to you. Orderly, but if one person leaves, the chain breaks.<br><br>
+<strong>Mesh</strong> = Every lawyer has a direct phone line to every other lawyer. Expensive, but if one line goes down, there are many alternatives. Used when communication must never fail.
+</div>
+
+<div class="lab">
+<div class="lab-h"><div class="lab-dots"><span></span><span></span><span></span></div>Lab: Identifying Your Network</div>
+<div class="lab-b">
+<div class="cm">// Try these commands to explore YOUR network:</div><br>
+<div class="cm">// WINDOWS:</div>
+<div class="pr">C:\\> ipconfig</div>
+<div class="out">   IPv4 Address: 192.168.1.88 (your private IP)</div>
+<div class="out">   Subnet Mask: 255.255.255.0</div>
+<div class="out">   Default Gateway: 192.168.1.1 (your router)</div><br>
+<div class="pr">C:\\> arp -a</div>
+<div class="out">   192.168.1.1   00:11:22:33:44:55  (router)</div>
+<div class="out">   192.168.1.5   a4:5e:60:b8:3c:12  (phone)</div>
+<div class="out">   192.168.1.20  3c:22:fb:12:ab:cd  (TV)</div><br>
+<div class="cm">// MAC/LINUX:</div>
+<div class="pr">$ ifconfig   OR   $ ip addr</div>
+<div class="pr">$ arp -a</div><br>
+<div class="cm">// TO FIND YOUR PUBLIC IP:</div>
+<div class="pr">$ curl ifconfig.me</div>
+<div class="out">   203.0.113.50</div><br>
+<div class="cm">// TO SEE ALL DEVICES ON YOUR NETWORK:</div>
+<div class="pr">$ nmap -sn 192.168.1.0/24</div>
+<div class="out">   Nmap scan report for 192.168.1.1 (router)</div>
+<div class="out">   Host is up (0.001s latency).</div>
+<div class="out">   MAC: 00:11:22:33:44:55 (Cisco Systems)</div>
+<div class="out">   </div>
+<div class="out">   Nmap scan report for 192.168.1.5</div>
+<div class="out">   Host is up (0.005s latency).</div>
+<div class="out">   MAC: a4:5e:60:b8:3c:12 (Apple Inc.)</div>
+<div class="out">   </div>
+<div class="out">   Nmap scan report for 192.168.1.88</div>
+<div class="out">   Host is up.</div>
+<div class="out">   (This is YOUR device)</div><br>
+<div class="cm">// nmap -sn = "ping scan" — finds all live devices</div>
+<div class="cm">// Notice: nmap identifies manufacturers from MAC OUI!</div>
+</div>
+</div>`;
+
+const T1_1_QS=[
+{type:"input",q:"What does LAN stand for?",a:"Local Area Network",h:"L___ A___ N___",e:"A LAN connects devices within a single location — your home, an office building, or a school campus."},
+{type:"mcq",q:"Your home router's primary functions include:",o:["Only providing Wi-Fi signal","Creating your LAN, assigning IPs, performing NAT, and acting as a basic firewall","Storing your files in the cloud","Increasing your internet speed beyond what your ISP provides"],a:1,h:"The router does many jobs.",e:"Your router creates the local network, assigns private IPs via DHCP, translates private↔public IPs via NAT, and provides basic firewall protection."},
+{type:"input",q:"Over 95% of intercontinental internet data travels through ___________ cables on the ocean floor.",a:"undersea",h:"Sub___ cables. Under the sea.",e:"Undersea fiber optic cables carry the vast majority of global internet traffic — over 550 cables totaling 1.3+ million km."},
+{type:"mcq",q:"'The cloud' actually means:",o:["Data floating in the atmosphere","Your data stored on someone else's computer in a specific physical building","A wireless technology","Satellite-based internet"],a:1,h:"There is no cloud — just...",e:"'The cloud' is marketing terminology. Your data physically resides on hard drives in data centers — specific buildings in specific cities."},
+{type:"mcq",q:"In a star topology, the biggest risk is:",o:["Too many devices slowing things down","The central switch/router failing (single point of failure)","Data collisions between devices","Cable lengths being too long"],a:1,h:"Everything depends on the center.",e:"If the central device fails, the entire network goes down. This is mitigated with redundant switches in enterprise networks."},
+{type:"input",q:"A _____ topology connects every device to every other device for maximum redundancy.",a:"mesh",h:"Like a spider web. M___.",e:"Mesh networks have no single point of failure — if one connection breaks, data takes an alternative path. Used in military and critical systems."},
+{type:"mcq",q:"In January 2022, a severed undersea cable cut communications to a Norwegian research station. This illustrates:",o:["The internet is completely wireless","Physical infrastructure is a critical vulnerability","Satellites provide backup for all internet traffic","The internet is self-healing and can't be disrupted"],a:1,h:"Physical cables = physical vulnerability.",e:"The global internet depends on a relatively small number of physical cables. Damaging them can disrupt connectivity for millions."},
+{type:"input",q:"The command to discover all devices on your local network using nmap is: nmap -__ 192.168.1.0/24",a:"sn",h:"A ping scan. Two letters.",e:"nmap -sn performs a ping scan — sending ICMP echo requests to find all live hosts on the specified network range."},
+{type:"mcq",q:"A VPN creates:",o:["A new physical cable to your destination","An encrypted tunnel through a public network","A faster internet connection","A local network in your house"],a:1,h:"Virtual + Private + Network = encrypted tunnel.",e:"VPNs encrypt your traffic and route it through a tunnel over the public internet, hiding your data and IP from observers."},
+{type:"input",q:"The wireless networking standard used by Wi-Fi is IEEE _______ (three digits with dots).",a:"802.11",h:"Eight-oh-two dot eleven.",e:"IEEE 802.11 is the family of standards defining Wi-Fi — including 802.11ac (Wi-Fi 5), 802.11ax (Wi-Fi 6), and 802.11be (Wi-Fi 7)."}
+];
+
+// Remaining tasks data - kept concise here for room, but each follows the same deep pattern
+const ROOMS_DATA=[
+{id:"r1",icon:"🌍",t:"What Is The Internet?",d:"From plugging in a cable to understanding how data crosses continents — networks, IPs, DNS, and ports explained from absolute zero.",df:"Easy",xp:10,tasks:[
+{t:"What Is a Network?",c:T1_1,qs:T1_1_QS},
+{t:"How Data Travels — Packets & Routing",c:`<h4>Breaking Data Into Packets</h4>
+<p>When you click a link or send a message, your device doesn't send the entire request as one continuous stream. It breaks the data into small pieces called <strong>packets</strong> — typically 1,500 bytes each (called the <strong>MTU — Maximum Transmission Unit</strong>).</p>
+
+<p>Why? Imagine sending a 500-page legal brief from Juba to Nairobi. You have two approaches:</p>
+
+<p><strong>Option A: Circuit Switching (the old telephone way)</strong><br>
+Reserve an entire dedicated line from Juba to Nairobi for the duration of your conversation. Nobody else can use that line while you're on it. If the line breaks, you lose everything and start over. This is how old telephone networks worked — an actual electrical circuit was established end-to-end.</p>
+
+<p><strong>Option B: Packet Switching (how the internet works)</strong><br>
+Break the brief into 50 numbered envelopes of 10 pages each. Send each envelope individually — they can take different routes, share the road with other people's envelopes, and arrive in any order. The receiving side reassembles them by number. If envelope #14 gets lost, only #14 needs to be resent. Multiple conversations share the same infrastructure simultaneously.</p>
+
+<p>The internet uses <strong>Option B — packet switching</strong>. This is the fundamental design decision that makes the internet scalable, resilient, and efficient.</p>
+
+<h4>Anatomy of a Packet</h4>
+<pre>
+┌───────────────────────────────────────────────────┐
+│                    IP PACKET                      │
+├───────────────────┬───────────────────────────────┤
+│     IP HEADER     │          PAYLOAD              │
+│   (20-60 bytes)   │    (the actual data)          │
+│                   │                               │
+│ Version: IPv4     │  This could be:               │
+│ Header Length: 20 │  • Part of a web page          │
+│ Total Length: 1500│  • A chunk of an email          │
+│ TTL: 64           │  • A piece of a file download   │
+│ Protocol: TCP (6) │  • A DNS query                  │
+│ Src: 192.168.1.88 │  • Part of a video stream       │
+│ Dst: 93.184.216.34│                               │
+│ Checksum: 0xA3F2  │  (up to ~1480 bytes)          │
+└───────────────────┴───────────────────────────────┘
+
+Key Header Fields:
+• Source IP — who sent this packet
+• Destination IP — where it's going
+• TTL (Time To Live) — max number of router hops before packet is discarded (prevents infinite loops)
+• Protocol — what's inside (6=TCP, 17=UDP, 1=ICMP)
+• Checksum — math check to detect corruption during transit
+</pre>
+
+<h4>The Journey of a Packet — Step by Step</h4>
+<p>Let's trace what happens when you type <code>https://www.google.com</code> and press Enter:</p>
+
+<ol>
+<li><strong>DNS Resolution:</strong> Your browser asks "What's the IP address for google.com?" → DNS returns <code>142.250.80.46</code></li>
+<li><strong>TCP Handshake:</strong> Your computer establishes a TCP connection with Google's server (SYN → SYN-ACK → ACK)</li>
+<li><strong>TLS Handshake:</strong> Encryption is negotiated (because HTTPS). Your browser and the server agree on encryption keys.</li>
+<li><strong>HTTP Request:</strong> Your browser sends an HTTP GET request for the homepage</li>
+<li><strong>Packetization:</strong> The request is broken into packets, each with source IP (you), destination IP (Google), and a sequence number</li>
+<li><strong>Local Delivery:</strong> Packets go to your router (Layer 2, using your router's MAC address)</li>
+<li><strong>NAT:</strong> Your router replaces your private IP (192.168.1.88) with your public IP (203.0.113.50) and forwards to your ISP</li>
+<li><strong>Routing:</strong> Each router along the path reads the destination IP and forwards the packet toward Google — this may involve 5-30 router hops across multiple ISPs and countries</li>
+<li><strong>Google Receives:</strong> Google's server reassembles all packets, processes the request, and generates a response (the HTML page)</li>
+<li><strong>Response Packets:</strong> Google sends response packets back — they may take a completely different route!</li>
+<li><strong>Reassembly:</strong> Your browser reassembles the packets into the complete webpage and renders it</li>
+</ol>
+
+<p>This entire process — from pressing Enter to seeing the page — typically takes <strong>50-200 milliseconds</strong>.</p>
+
+<div class="lab">
+<div class="lab-h"><div class="lab-dots"><span></span><span></span><span></span></div>Lab: Tracing a Packet's Route</div>
+<div class="lab-b">
+<div class="pr">$ traceroute google.com</div>
+<div class="out">
+traceroute to google.com (142.250.80.46), 30 hops max
+ 1  192.168.1.1       1.2 ms   ← Your router (home)
+ 2  10.10.0.1         5.3 ms   ← ISP local hub
+ 3  41.76.1.1        12.8 ms   ← ISP backbone
+ 4  196.49.1.50      28.4 ms   ← Regional transit hub
+ 5  72.14.218.9      45.2 ms   ← Google edge router
+ 6  142.250.80.46    52.1 ms   ← Google's server (destination!)
+</div><br>
+<div class="cm">// Each line = one HOP (router your packet passed through)</div>
+<div class="cm">// Time in ms = LATENCY (round-trip time to that hop)</div>
+<div class="cm">// Notice: latency increases with distance</div>
+<div class="cm">// Hop 1 (1.2ms) = your router (inches away)</div>
+<div class="cm">// Hop 6 (52.1ms) = Google's server (possibly another continent)</div>
+<div class="cm">//</div>
+<div class="cm">// TRY IT YOURSELF:</div>
+<div class="cm">// Windows: tracert google.com</div>
+<div class="cm">// Mac/Linux: traceroute google.com</div>
+<div class="cm">//</div>
+<div class="cm">// If a hop shows * * * it means that router blocks ICMP</div>
+<div class="cm">// (traceroute uses ICMP or UDP depending on OS)</div>
+</div>
+</div>
+
+<div class="lab">
+<div class="lab-h"><div class="lab-dots"><span></span><span></span><span></span></div>Lab: Testing Connectivity with Ping</div>
+<div class="lab-b">
+<div class="pr">$ ping google.com</div>
+<div class="out">
+PING google.com (142.250.80.46): 56 data bytes
+64 bytes from 142.250.80.46: icmp_seq=0 ttl=116 time=23.4 ms
+64 bytes from 142.250.80.46: icmp_seq=1 ttl=116 time=24.1 ms
+64 bytes from 142.250.80.46: icmp_seq=2 ttl=116 time=22.8 ms
+64 bytes from 142.250.80.46: icmp_seq=3 ttl=116 time=23.9 ms
+
+--- google.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss
+round-trip min/avg/max = 22.8/23.5/24.1 ms
+</div><br>
+<div class="cm">// ping sends ICMP Echo Request packets and waits for replies</div>
+<div class="cm">// ttl=116 means the packet started with TTL 128 and passed through 12 routers (128-116=12)</div>
+<div class="cm">// time=23.4ms is the round-trip latency</div>
+<div class="cm">// 0% packet loss = perfect connection</div>
+<div class="cm">// High packet loss or * = network problems or host is blocking ICMP</div>
+<div class="cm">//</div>
+<div class="cm">// USEFUL VARIATIONS:</div>
+<div class="cm">// ping -c 10 google.com    ← send exactly 10 pings</div>
+<div class="cm">// ping -t google.com       ← continuous (Windows)</div>
+<div class="cm">// ping 192.168.1.1         ← ping your router (test local connection)</div>
+</div>
+</div>
+
+<h4>Key Networking Terminology</h4>
+<table>
+<tr><th>Term</th><th>Meaning</th><th>Analogy</th><th>Measured In</th></tr>
+<tr><td><strong>Bandwidth</strong></td><td>Maximum data transfer rate of a connection</td><td>Width of the highway — how many lanes</td><td>Mbps, Gbps</td></tr>
+<tr><td><strong>Latency</strong></td><td>Time for a single packet to travel from A to B</td><td>Length of the highway — how far the trip</td><td>Milliseconds (ms)</td></tr>
+<tr><td><strong>Throughput</strong></td><td>Actual achieved data rate (always less than bandwidth)</td><td>Actual cars passing per hour (factoring in traffic, accidents)</td><td>Mbps</td></tr>
+<tr><td><strong>Hop</strong></td><td>Each router a packet passes through</td><td>Each checkpoint along the delivery route</td><td>Count</td></tr>
+<tr><td><strong>TTL</strong></td><td>Time To Live — max hops before packet is discarded</td><td>Package expires after X days in transit</td><td>Hop count (0-255)</td></tr>
+<tr><td><strong>Packet Loss</strong></td><td>Percentage of packets that don't arrive</td><td>Percentage of mail lost in transit</td><td>Percentage (%)</td></tr>
+<tr><td><strong>Jitter</strong></td><td>Variation in latency between packets</td><td>Some trips take 10 min, others 30 min — unpredictable</td><td>Milliseconds (ms)</td></tr>
+<tr><td><strong>MTU</strong></td><td>Maximum Transmission Unit — max packet size</td><td>Maximum envelope size the postal service accepts</td><td>Bytes (typically 1500)</td></tr>
+</table>
+
+<div class="bx an"><div class="bl">⚖️ Legal Analogy — Bandwidth vs Latency</div>Imagine two courthouses processing cases.<br><br><strong>Courthouse A</strong> has 10 clerks (high bandwidth) but is 500 miles away (high latency). It can handle many cases simultaneously, but each one takes time to arrive.<br><br><strong>Courthouse B</strong> has 2 clerks (low bandwidth) but is next door (low latency). Each case gets there instantly, but only 2 can be processed at once.<br><br>For a simple question ("is this case active?"), Courthouse B is faster despite lower bandwidth. For a massive document transfer, Courthouse A wins despite higher latency. Different tasks need different priorities — just like video calls need low latency (UDP) while file downloads need high throughput (TCP).</div>
+
+<div class="bx sc"><div class="bl">📰 Real World — When Packet Loss Matters</div>In October 2021, Facebook (Meta) experienced a 6-hour global outage affecting Facebook, Instagram, WhatsApp, and Oculus. The root cause was a BGP routing update that accidentally withdrew all of Facebook's routes from the global routing table. Since their DNS servers were also unreachable, the domain facebook.com simply stopped resolving. Effectively, Facebook's packets had nowhere to go — 100% packet loss to every Facebook service worldwide. Cost: estimated $60 million in lost revenue plus untold productivity losses for the 3+ billion users who rely on Meta's platforms.</div>`,qs:[
+{type:"input",q:"The internet uses ______ switching (not circuit switching) to deliver data.",a:"packet",h:"Data is broken into small ______s.",e:"Packet switching breaks data into small packets that independently route through the network — more efficient and resilient than dedicated circuit switching."},
+{type:"input",q:"The maximum size of a standard network packet is 1500 bytes. This limit is called the ___ (three letters).",a:"MTU",h:"Maximum T_______ U___.",e:"MTU (Maximum Transmission Unit) is typically 1500 bytes for Ethernet networks. Packets larger than the MTU must be fragmented."},
+{type:"input",q:"TTL stands for Time To _____.",a:"Live",h:"How long a packet survives.",e:"TTL is decremented by 1 at each router hop. When it reaches 0, the packet is discarded — preventing infinite routing loops."},
+{type:"input",q:"The command to test if a host is reachable and measure latency is ____.",a:"ping",h:"Four letters. Uses ICMP echo.",e:"ping sends ICMP Echo Request packets and measures the round-trip time. It's the most basic network diagnostic tool."},
+{type:"input",q:"The command to see every router hop between you and a destination is __________.",a:"traceroute",h:"trace + route.",e:"traceroute (Linux/Mac) or tracert (Windows) reveals every router your packets pass through and the latency at each hop."},
+{type:"mcq",q:"Bandwidth is the width of the highway. Latency is:",o:["The speed limit","The length/distance of the trip","The number of lanes","The road surface quality"],a:1,h:"Bandwidth = capacity, Latency = time.",e:"Bandwidth measures maximum capacity (lanes). Latency measures time for a single packet to travel the distance. High bandwidth doesn't mean low latency."},
+{type:"mcq",q:"Facebook's 2021 outage was caused by:",o:["A DDoS attack","A BGP routing update that withdrew all Facebook routes","Physical cable damage","A ransomware attack"],a:1,h:"A routing misconfiguration.",e:"An automated BGP update accidentally removed all of Facebook's routes from the global routing table — making their entire network unreachable for 6 hours."},
+{type:"input",q:"The variation in latency between packets is called ______.",a:"jitter",h:"J_____. Important for video calls.",e:"Jitter measures how much latency varies between packets. High jitter causes choppy audio/video in real-time communications."},
+{type:"mcq",q:"When your browser visits an HTTPS site, the order of operations is:",o:["HTTP request → DNS → TCP → TLS","DNS → TCP → TLS → HTTP request","TLS → DNS → HTTP → TCP","HTTP → TLS → TCP → DNS"],a:1,h:"First find the address, then connect, then encrypt, then request.",e:"DNS resolves the domain name, TCP establishes the connection (3-way handshake), TLS negotiates encryption, then the HTTP request is sent securely."},
+{type:"input",q:"In a ping result showing ttl=116, if the default TTL was 128, the packet crossed ___ routers. (number)",a:"12",h:"128 minus 116.",e:"128 - 116 = 12 router hops. Default TTL is 128 (Windows) or 64 (Linux/Mac). The difference tells you how many routers the packet traversed."}
+]},
+// remaining tasks would continue with same depth...
+// For file size, including 2 more tasks with shorter but still rich content
+{t:"IP Addressing — Your Network Identity",c:`<h4>Every Device Needs an Address</h4>
+<p>For devices to communicate, each needs a unique identifier — like a mailing address for mail delivery. In networking, this is the <strong>IP (Internet Protocol) address</strong>.</p>
+
+<h4>IPv4 — The Address Format You'll See Most</h4>
+<p>IPv4 addresses consist of four numbers (0-255) separated by dots. Each number is called an <strong>octet</strong> (8 bits):</p>
+<pre>
+192.168.1.88
+
+Each octet in binary:
+  192    →  11000000   (128+64 = 192)
+  168    →  10101000   (128+32+8 = 168)
+    1    →  00000001   (1)
+   88    →  01011000   (64+16+8 = 88)
+
+Total: 4 octets × 8 bits = 32 bits
+Possible addresses: 2^32 = 4,294,967,296 (~4.3 billion)
+
+But with 20+ billion connected devices... we ran out!
+</pre>
+
+<h4>Public vs Private IP Addresses</h4>
+<p>The solution to running out of IPs: <strong>NAT (Network Address Translation)</strong>. Your ISP gives your household <strong>one</strong> public IP. Your router creates private IPs for all internal devices.</p>
+
+<table>
+<tr><th></th><th>Public IP</th><th>Private IP</th></tr>
+<tr><td><strong>Visible to</strong></td><td>The entire internet</td><td>Only your local network</td></tr>
+<tr><td><strong>Assigned by</strong></td><td>Your ISP</td><td>Your router (via DHCP)</td></tr>
+<tr><td><strong>Globally unique?</strong></td><td>Yes — no two devices share a public IP</td><td>No — millions of homes use 192.168.1.x</td></tr>
+<tr><td><strong>Example</strong></td><td>203.0.113.50</td><td>192.168.1.88</td></tr>
+</table>
+
+<h5>Private IP Ranges (memorize these!)</h5>
+<table>
+<tr><th>Range</th><th>Class</th><th>Total Addresses</th><th>Common Use</th></tr>
+<tr><td><code>10.0.0.0 — 10.255.255.255</code></td><td>A</td><td>16.7 million</td><td>Large corporate networks</td></tr>
+<tr><td><code>172.16.0.0 — 172.31.255.255</code></td><td>B</td><td>1 million</td><td>Medium organizations</td></tr>
+<tr><td><code>192.168.0.0 — 192.168.255.255</code></td><td>C</td><td>65,536</td><td>Home networks, small offices</td></tr>
+</table>
+
+<div class="bx tp"><div class="bl">💡 Quick Recognition</div>If an IP starts with <strong>10.</strong>, <strong>172.16-31.</strong>, or <strong>192.168.</strong> — it's a private IP. Everything else is public (with some exceptions like 127.0.0.1 for localhost).</div>
+
+<h4>NAT — How Your Router Translates Addresses</h4>
+<pre>
+INSIDE YOUR HOME:                    THE INTERNET:
+
+Phone (192.168.1.5) ────┐
+                        │
+Laptop (192.168.1.88) ──┤──→ ROUTER ──→ All appear as 203.0.113.50
+                        │    (NAT)
+TV (192.168.1.20) ──────┘
+
+The router maintains a NAT TABLE:
+┌─────────────┬───────┬──────────────────┬───────┐
+│ Internal IP  │ Port  │ External IP      │ Port  │
+├─────────────┼───────┼──────────────────┼───────┤
+│ 192.168.1.5  │ 52481 │ 203.0.113.50     │ 52481 │
+│ 192.168.1.88 │ 49320 │ 203.0.113.50     │ 49320 │
+│ 192.168.1.20 │ 60012 │ 203.0.113.50     │ 60012 │
+└─────────────┴───────┴──────────────────┴───────┘
+
+When a response comes back, the router checks its table
+and forwards to the correct internal device.
+</pre>
+
+<h4>DHCP — Automatic Address Assignment</h4>
+<p>When you connect to a network, you don't manually type an IP. <strong>DHCP</strong> handles it automatically in 4 steps (remember: <strong>DORA</strong>):</p>
+<ol>
+<li><strong>D</strong>iscover — Your device broadcasts: "Any DHCP server out there?"</li>
+<li><strong>O</strong>ffer — Router responds: "I can offer you 192.168.1.88"</li>
+<li><strong>R</strong>equest — Your device: "I'll take 192.168.1.88 please"</li>
+<li><strong>A</strong>cknowledge — Router: "Confirmed. It's yours for 24 hours (lease time)"</li>
+</ol>
+
+<h4>MAC Addresses — Permanent Hardware Identity</h4>
+<p>While IP addresses are <em>logical</em> (assigned by software), every network card has a permanent <strong>MAC address</strong> burned in at manufacturing:</p>
+<pre>
+A4:5E:60:B8:3C:12
+
+│─────│  │─────│
+  OUI     Device ID
+(Mfg)    (Unique per device)
+
+First 3 pairs (A4:5E:60) = Manufacturer identifier
+  → You can look this up! A4:5E:60 = Apple Inc.
+  → 00:50:56 = VMware
+  → B8:27:EB = Raspberry Pi
+  
+Last 3 pairs (B8:3C:12) = Unique device serial
+</pre>
+
+<div class="bx sc"><div class="bl">📰 Forensic Investigation Scenario</div>A company discovers unauthorized access to their financial database at 2:37 AM. The investigation process:<br><br>
+1. <strong>Firewall logs</strong> show the access came from public IP <code>41.76.234.15</code><br>
+2. <strong>ISP records</strong> (obtained with a court order) trace that IP to a specific household<br>
+3. <strong>Router logs</strong> at that household show private IP <code>192.168.1.12</code> was active at 2:37 AM<br>
+4. <strong>DHCP logs</strong> show <code>192.168.1.12</code> was leased to MAC <code>A4:5E:60:B8:3C:12</code><br>
+5. <strong>OUI lookup</strong> reveals <code>A4:5E:60</code> = Apple Inc. → It's an iPhone<br>
+6. The suspect's iPhone is seized; its MAC matches<br>
+7. <strong>Browser history and app data</strong> on the phone confirm the access<br><br>
+This chain — public IP → ISP → household → private IP → MAC → physical device → device forensics — is how digital investigations work. Each link must be documented for <strong>chain of custody</strong>.</div>`,qs:[
+{type:"input",q:"IPv4 addresses are ___ bits long.",a:"32",h:"4 octets × 8 bits each.",e:"32 bits = ~4.3 billion possible addresses. We've exhausted them, which is why NAT and IPv6 were created."},
+{type:"input",q:"NAT stands for Network Address __________.",a:"Translation",h:"T_________. Converting between private and public.",e:"NAT translates between private IPs (used internally) and the single public IP (used externally) assigned by your ISP."},
+{type:"mcq",q:"192.168.1.88 is a:",o:["Public IP","Private IP","MAC address","Subnet mask"],a:1,h:"192.168.x.x is a reserved private range.",e:"192.168.0.0 – 192.168.255.255 is one of three private IP ranges defined in RFC 1918."},
+{type:"input",q:"DHCP's four steps are remembered with the acronym ____ (four letters).",a:"DORA",h:"Discover, Offer, Request, Acknowledge.",e:"DORA: Discover → Offer → Request → Acknowledge. This process automatically assigns IP addresses to devices joining a network."},
+{type:"input",q:"A MAC address is ___ bits long.",a:"48",h:"6 pairs × 8 bits.",e:"48 bits = 6 octets in hexadecimal. The first 3 identify the manufacturer (OUI), the last 3 are device-specific."},
+{type:"input",q:"The first 3 pairs of a MAC address identify the manufacturer. This is called the ___ (three letters).",a:"OUI",h:"Organizationally Unique I_________.",e:"OUI (Organizationally Unique Identifier) — lets you look up which company made the device from its MAC address."},
+{type:"mcq",q:"In a forensic investigation, the chain from internet to device is:",o:["MAC → Private IP → Public IP","Public IP → ISP → Private IP → MAC → Physical device","Physical device → MAC → Public IP","DNS → HTTP → TCP → IP"],a:1,h:"Start from what's visible on the internet, work inward.",e:"Public IP → ISP records → household → router/DHCP logs → private IP → MAC address → physical device identification."},
+{type:"input",q:"The IP address 127.0.0.1 is called the _________ address (refers to your own computer).",a:"localhost",h:"Local + host.",e:"127.0.0.1 (localhost/loopback) always refers to the device itself. Used for testing local services without a network."},
+{type:"mcq",q:"If you see an IP starting with 10.x.x.x, it is:",o:["A public IP assigned by an ISP","A private IP used within a local network","A MAC address","An IPv6 address"],a:1,h:"10.0.0.0/8 is a private range.",e:"10.0.0.0 – 10.255.255.255 is the largest private IP range, commonly used in corporate networks with millions of internal devices."}
+]}
+]}
+];
+
+// Future modules visible on learning path
+const FUTURE=[
+{name:"The OSI Model — Complete Guide",level:1,rooms:[
+{id:"f_osi",icon:"📶",t:"The OSI Model",d:"All 7 layers deep — with packet analysis, protocol mapping, and security at each layer.",df:"Easy",xp:10,soon:true},
+{id:"f_sub",icon:"🔢",t:"Subnetting & CIDR",d:"Subnet masks, CIDR notation, network/host calculations, VLSM.",df:"Medium",xp:15,soon:true},
+{id:"f_tcp",icon:"🔄",t:"TCP/IP In Practice",d:"Three-way handshake, TCP flags, Wireshark analysis, protocol troubleshooting.",df:"Medium",xp:15,soon:true},
+{id:"f_dev",icon:"🔧",t:"Network Devices & Security",d:"Routers, switches, firewalls, IDS/IPS, DMZ, network segmentation.",df:"Medium",xp:15,soon:true},
+]},
+{name:"How The Web Works",level:2,rooms:[
+{id:"f_dns",icon:"🔤",t:"DNS Deep Dive",d:"Resolution process, record types, DNSSEC, DNS attacks and defenses.",df:"Medium",xp:15,soon:true},
+{id:"f_http",icon:"🌍",t:"HTTP in Detail",d:"Methods, headers, status codes, cookies, sessions, CORS, CSP.",df:"Medium",xp:15,soon:true},
+{id:"f_web",icon:"🖥️",t:"Web Application Security",d:"OWASP Top 10, SQL injection, XSS, CSRF — with interactive labs.",df:"Medium",xp:20,soon:true},
+]},
+{name:"Cyber Threats & Attacks",level:2,rooms:[
+{id:"f_mal",icon:"🦠",t:"Malware Analysis",d:"Every malware family with IOCs, behavioral analysis, and sandbox techniques.",df:"Medium",xp:15,soon:true},
+{id:"f_se",icon:"🎭",t:"Social Engineering",d:"Phishing, BEC, deepfakes, pretexting, and building security awareness.",df:"Medium",xp:15,soon:true},
+{id:"f_na",icon:"💥",t:"Network Attacks Lab",d:"DDoS, MitM, ARP spoofing, credential stuffing — with simulated attacks.",df:"Hard",xp:20,soon:true},
+]},
+{name:"Cryptography & PKI",level:3,rooms:[
+{id:"f_cry",icon:"🔐",t:"Encryption & Hashing",d:"AES, RSA, ECC, SHA-256, bcrypt, TLS 1.3 handshake, certificate chains.",df:"Hard",xp:20,soon:true},
+]},
+{name:"Defensive Security & Forensics",level:3,rooms:[
+{id:"f_ir",icon:"🚨",t:"Incident Response",d:"6 phases, tabletop exercises, breach timelines, NIST framework.",df:"Hard",xp:25,soon:true},
+{id:"f_for",icon:"🔍",t:"Digital Forensics",d:"Disk imaging, Volatility, timeline analysis, chain of custody, metadata.",df:"Hard",xp:25,soon:true},
+]},
+{name:"Offensive Security",level:3,rooms:[
+{id:"f_pen",icon:"🎯",t:"Penetration Testing",d:"Full methodology: recon, scanning, exploitation, post-exploitation, reporting.",df:"Hard",xp:25,soon:true},
+{id:"f_kc",icon:"⚔️",t:"Kill Chain & MITRE ATT&CK",d:"Real APT campaigns mapped to frameworks. SolarWinds, NotPetya analysis.",df:"Hard",xp:25,soon:true},
+]},
+];
+
+// Build module data structure
+const M=[
+{name:"Networking from Zero",level:1,rooms:ROOMS_DATA},
+...FUTURE.map(f=>({...f,rooms:f.rooms.map(r=>({...r,tasks:[{t:"Coming Soon",c:`<div class="bx ch"><div class="bl">🔜 Coming in Next Session</div>This room is being built with textbook-level depth, interactive labs, 10+ questions, and real-world case studies. Check back after your next session with your instructor!</div>`,qs:[]}]}))}))
+];
+
+// ═══════ ENGINE ═══════
+let S={xp:0,ans:{}};try{const s=localStorage.getItem('csa6');if(s)S={...S,...JSON.parse(s)}}catch(e){}
+const sv=()=>{try{localStorage.setItem('csa6',JSON.stringify(S))}catch(e){}};
+const lv=()=>Math.floor(S.xp/100)+1;
+const aR=()=>{let r=[];M.forEach(m=>m.rooms.forEach(rm=>r.push(rm)));return r};
+const rP=id=>{const r=aR().find(x=>x.id===id);if(!r||r.soon)return 0;let t=0,d=0;r.tasks.forEach((tk,ti)=>tk.qs.forEach((_,qi)=>{t++;if(S.ans[`${id}-${ti}-${qi}`])d++}));return t?d/t:0};
+const rD=id=>rP(id)===1;
+const tQ=()=>{let t=0;aR().filter(r=>!r.soon).forEach(r=>r.tasks.forEach(tk=>t+=tk.qs.length));return t};
+const dQ=()=>Object.keys(S.ans).length;
+const uT=()=>{document.getElementById('txp').textContent=S.xp;document.getElementById('tlv').textContent=lv()};
+let oT={};
+
+function showP(){
+document.getElementById('vp').classList.add('active');document.getElementById('vr').classList.remove('active');
+const t=tQ(),d=dQ(),p=t?Math.round(d/t*100):0;
+const B=[{i:"🌱",n:"First Steps",e:S.xp>=10},{i:"🌐",n:"Network Novice",e:rD('r1')},{i:"🏆",n:"Module Complete",e:rD('r1')}];
+let h=`<div class="hero"><h1>🛡️ CyberSec Academy</h1><p>Beginner to expert — textbook-depth content, interactive labs, real-world case studies.</p><div class="hs-row"><div class="hs">⚡<b>${S.xp}</b>XP</div><div class="hs">📝<b>${d}</b>/${t}</div><div class="hs">🎯Lv<b>${lv()}</b></div></div></div>`;
+h+=`<div class="sum"><div class="sg"><div class="sc"><div class="si">⚡</div><div class="sv">${S.xp}</div><div class="sl">XP</div></div><div class="sc"><div class="si">📝</div><div class="sv">${p}%</div><div class="sl">Done</div></div><div class="sc"><div class="si">🎯</div><div class="sv">${lv()}</div><div class="sl">Level</div></div><div class="sc"><div class="si">🏅</div><div class="sv">${B.filter(b=>b.e).length}</div><div class="sl">Badges</div></div></div><div class="badges">${B.map(b=>`<div class="bdg ${b.e?'on':'off'}"><span>${b.i}</span><div class="bt">${b.n}</div></div>`).join('')}</div></div>`;
+const lvs=[{n:"Level 1: Foundations",l:1,c:"l1",s:"Start here — zero prerequisites"},{n:"Level 2: Core Skills",l:2,c:"l2",s:"Build practical knowledge"},{n:"Level 3: Specialization",l:3,c:"l3",s:"Expert-level depth"}];
+lvs.forEach(lvi=>{const ms=M.filter(m=>m.level===lvi.l);if(!ms.length)return;
+h+=`<div class="lb"><div class="lbb ${lvi.c}"><div class="li">${lvi.l===1?'🌱':lvi.l===2?'⚡':'🔥'}</div><div><div class="ln">${lvi.n}</div><div class="ls">${lvi.s}</div></div></div></div>`;
+ms.forEach(mod=>{const gi=M.indexOf(mod);
+h+=`<div class="ms"><div class="mh"><div><div class="mn">Module ${gi+1}</div><div class="mt_">${mod.name}</div></div></div><div>`;
+mod.rooms.forEach((r,ri)=>{const pg=rP(r.id),dn=rD(r.id),pc=Math.round(pg*100),tqs=r.soon?0:r.tasks.reduce((a,t)=>a+t.qs.length,0);
+if(ri>0)h+=`<div class="mcon"></div>`;
+h+=`<div class="rn"><div class="rp${dn?' dn':''}" style="${r.soon?'opacity:.35;cursor:default':''}" onclick="${r.soon?'':'oR(\''+r.id+'\')'}"><span>${r.icon}</span><div class="ck">✓</div>${!r.soon?`<div class="pb"><div class="pf" style="width:${pc}%"></div></div>`:''}</div><div class="ri"><h3 style="${r.soon?'opacity:.4':''}" ${r.soon?'':`onclick="oR('${r.id}')"`}>${r.t}</h3><div class="rd">${r.d}</div><div class="rm"><span class="tag ${r.df==='Easy'?'easy':r.df==='Medium'?'med':'hard'}">${r.df}</span>${r.soon?'<span class="tag soon">🔜 Coming Soon</span>':`<span class="tag">${tqs}Qs</span>`}${pc>0&&!dn?`<span class="tag" style="color:var(--o)">${pc}%</span>`:''}${dn?'<span class="tag" style="color:var(--g)">✓</span>':''}</div></div></div>`;});
+h+=`</div></div>`;});});
+h+=`<div class="foot">CyberSec Academy — Progress saved locally. New modules added each session. 🛡️</div>`;
+document.getElementById('vp').innerHTML=h;window.scrollTo(0,0);}
+
+function oR(id){const r=aR().find(x=>x.id===id);if(!r||r.soon)return;
+document.getElementById('vp').classList.remove('active');document.getElementById('vr').classList.add('active');
+const pg=rP(id),pc=Math.round(pg*100);let tq=0;r.tasks.forEach(tk=>tq+=tk.qs.length);
+let h=`<div class="rv"><div class="rv-bk" onclick="showP()">← Learning Path</div><div class="rv-hd"><h1><span style="font-size:24px">${r.icon}</span>${r.t}</h1><div class="rvd">${r.d}</div><div class="rvm"><div class="rvs">📝${tq} questions</div><div class="rvs">⚡${r.xp} XP each</div><div class="rvs" style="color:${pc===100?'var(--g)':'var(--o)'}">${pc}%</div></div><div class="rvpb"><div class="rvpf" style="width:${pc}%"></div></div></div>`;
+r.tasks.forEach((tk,ti)=>{let td=true;tk.qs.forEach((_,qi)=>{if(!S.ans[`${id}-${ti}-${qi}`])td=false});
+const io=oT[`${id}-${ti}`];let qh='';
+tk.qs.forEach((q,qi)=>{const k=`${id}-${ti}-${qi}`,an=S.ans[k];
+if(q.type==='mcq'){const L=['A','B','C','D'];
+qh+=`<div class="qb" id="q-${k}"><div class="qt">${q.q}</div><div class="mcq" id="m-${k}">${q.o.map((op,oi)=>`<div class="mc${an?' ds':''}${an&&oi===q.a?' omq':''}${an&&an.p!==undefined&&an.p!==q.a&&oi===an.p?' nmq':''}" ${an?'':`onclick="mA('${k}',${oi},${q.a})"`}><span class="ml">${L[oi]}</span>${op}</div>`).join('')}</div>${an?`<div class="qf ofb">✓ ${q.e}</div>`:''}</div>`}
+else{qh+=`<div class="qb" id="q-${k}"><div class="qt">${q.q}</div><div class="qr"><input class="qi${an?' ok':''}" id="i-${k}" placeholder="${an?an.v:'Type answer...'}" ${an?'disabled':''} onkeydown="if(event.key==='Enter')cI('${k}')"><button class="qh" onclick="sH('${k}')">💡</button><button class="qbtn" ${an?'disabled':''} onclick="cI('${k}')">Check</button></div>${an?`<div class="qf ofb">✓ ${q.e}</div>`:''}</div>`}});
+h+=`<div class="task${td?' dn':''}${io?' op':''}" id="t-${id}-${ti}"><div class="th" onclick="tT('${id}',${ti})"><div class="tn">${td?'✓':ti+1}</div><div class="tt">Task ${ti+1}: ${tk.t}</div><div class="tx">+${r.xp*tk.qs.length}XP</div><div class="tc_">▸</div></div><div class="tb"><div class="cn">${tk.c}</div>${qh}</div></div>`});
+h+=`</div>`;document.getElementById('vr').innerHTML=h;window.scrollTo(0,0)}
+
+function tT(id,ti){oT[`${id}-${ti}`]=!oT[`${id}-${ti}`];document.getElementById(`t-${id}-${ti}`)?.classList.toggle('op')}
+function fQ(k){const[id,ti,qi]=k.split('-');const r=aR().find(x=>x.id===id);return r?.tasks[+ti]?.qs[+qi]}
+function gX(k){const id=k.split('-')[0],r=aR().find(x=>x.id===id),x=r?r.xp:10;S.xp+=x;sv();uT();const e=document.createElement('div');e.className='xpt';e.textContent=`+${x} XP`;document.body.appendChild(e);setTimeout(()=>e.remove(),900)}
+function cK(k){const[id,ti]=k.split('-'),r=aR().find(x=>x.id===id);if(!r)return;let d=true;r.tasks[+ti].qs.forEach((_,qi)=>{if(!S.ans[`${id}-${ti}-${qi}`])d=false});if(d){const e=document.getElementById(`t-${id}-${ti}`);if(e){e.classList.add('dn');e.querySelector('.tn').textContent='✓'}}}
+function mA(k,p,c){if(S.ans[k])return;S.ans[k]={p};sv();const q=fQ(k);document.querySelectorAll(`#m-${k} .mc`).forEach((o,i)=>{o.classList.add('ds');o.onclick=null;if(i===c)o.classList.add('omq');if(i===p&&p!==c)o.classList.add('nmq')});const f=document.createElement('div');f.className=`qf ${p===c?'o':'n'}fb`;f.textContent=p===c?`✓ ${q.e}`:`✗ ${q.e}`;document.getElementById(`q-${k}`).appendChild(f);if(p===c)gX(k);cK(k)}
+function cI(k){if(S.ans[k])return;const q=fQ(k);if(!q)return;const i=document.getElementById(`i-${k}`),v=i.value.trim();if(!v)return;if(v.toLowerCase().replace(/[^a-z0-9&.\/]/g,'')===q.a.toLowerCase().replace(/[^a-z0-9&.\/]/g,'')){S.ans[k]={v};sv();i.classList.add('ok');i.disabled=true;i.value=q.a;const f=document.createElement('div');f.className='qf ofb';f.textContent=`✓ ${q.e}`;document.getElementById(`q-${k}`).appendChild(f);gX(k);cK(k)}else{i.classList.add('no');const qb=document.getElementById(`q-${k}`),old=qb.querySelector('.nfb');if(old)old.remove();const f=document.createElement('div');f.className='qf nfb';f.textContent='✗ Not quite — try again!';qb.appendChild(f);setTimeout(()=>i.classList.remove('no'),500)}}
+function sH(k){const q=fQ(k);if(!q)return;const qb=document.getElementById(`q-${k}`);if(qb.querySelector('.hfb'))return;const f=document.createElement('div');f.className='qf hfb';f.textContent=`💡 ${q.h}`;qb.appendChild(f)}
+uT();showP();
+</script>
+</body>
+</html>
